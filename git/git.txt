@@ -1,0 +1,99 @@
+
+
+
+Git command———branch
+////////////////////////// git branch — push new branch to remote
+First create branch locally
+$> git checkout -b newBranchName
+Then push the branch to the remote repository origin
+
+In Git terms, a "checkout" is the act of switching between different versions of a target entity.
+
+$> git push -u origin newBranchName
+
+There is no notion of "child branch": a branch is simply a sequence of commits: Your newBranch simply starts from the current HEAD of baseBranch, but it is actually composed of all baseBranchcommits, and of the new commits you are about to create. See more at "Find the parent branch of a Git branch".
+You can push newBranch to GitHub without worrying about baseBranch.
+git push -u origin newBranch
+
+//—
+$> git branch -a                         // show all the branches
+$> git branch newBranch          // create a branch called newBranch
+$> git checkout newBranch      //switch to newBranch
+$> git checkout master // switch to master branch
+$> git branch -m oldBranchName newBranchName // change a branch name
+$> git branch -d branchName // delete a branch
+
+$> git log --online --decorate
+
+//—
+$> git checkout -b newBranchName // create a branch and switch to that branch
+$> git commit -am “commit info”       // git add + git commit   
+$> git log --oneline --decorate
+$> git log --oneline --graph --decorate
+
+//—merge a branch to master branch
+$> git checkout master // switch back to master branch
+$> git merge BranchToBeMerged --no-ff// merge BranchToBeMerged to master.  --no-ff This command merges the specified branch into the currentbranch, but always generates a merge commit (even if it was a fast-forward merge).
+
+After merging, we may delete the merged branch
+
+
+
+Branches are only labels
+
+//////////////////////////$>git pull
+$> git pull origin master       //make local master update to date         // always do a pull before do a push
+$> git push origin master    // push local repo to remote repo
+
+
+
+
+
+//////////////////////////$>git fetch   
+git fetch
+Fetch branches and/or tags (collectively, "refs") from one or more other repositories, along with the objects necessary to complete their histories. Remote-tracking branches are updated (see the description of <refspec> below for ways to control this behavior).
+
+
+//////////////////////////!!!
+After this feature is completed, we use git pull to pull this branch to master branch   
+
+
+
+////////////////////////// Delete Remote Branch [Updated on 8-Sep-2017]
+$> git push <remote_name> :<branch_name>
+// for example, $> git push origin :subbranch_useraccept
+
+Executive Summary
+$ git push -d <remote_name> <branch_name>
+$ git branch -d <branch_name>
+Note that in most cases the remote name is origin.
+
+Delete Local Branch
+To delete the local branch use one of the following:
+$ git branch -d branch_name
+$ git branch -D branch_name
+Note: The -d option is an alias for --delete, which only deletes the branch if it has already been fully merged in its upstream branch. You could also use -D, which is an alias for --delete --force, which deletes the branch "irrespective of its merged status." [Source: man git-branch]
+
+Delete Remote Branch [Updated on 8-Sep-2017]
+As of Git v1.7.0, you can delete a remote branch using
+$ git push <remote_name> --delete <branch_name>
+which might be easier to remember than
+$ git push <remote_name> :<branch_name>
+
+/////////////////////////////////git remove directory
+You could checkout 'master' with both directories;
+git rm -r one-of-the-directories
+git commit -m "Remove duplicated directory"
+git push origin <your-git-branch> (typically 'master', but not always)
+
+
+////////////////////////// 1. Create branch — Use the branch command with a name to create a new branch with that name.
+$> git branch <branchname>
+
+///////////////////////// git branch — push new branch to remote
+$> git push -u origin newBranchName
+
+////////////////////////// Delete Remote Branch 
+$> git push <remote_name> :<branch_name>
+// for example, $> git push origin :subbranch_useraccept
+
