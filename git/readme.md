@@ -11,7 +11,7 @@ git branch
 4 feature     // for developing features      
 ```
 
-# git branch example    
+# git branch example1 - normal development process   
 ```
 1 create a local feature branch(call localFeature), use this branch to modify code and commit changes locally  
 
@@ -36,6 +36,25 @@ so that we merge the commitment from localFeature to develop branch
 5 push code in local develop branch to remote repo 
 
 ```
+
+
+
+# git branch example2 - simple example of push a localBranch to a new remote branch   
+```
+1 commit local branch(say the local branch is call localBranch)
+
+2 create a local branch called newRemoteBranch and switch to that branch 
+
+$> git checkout -b newRemoteBranch
+
+
+3 push the local content to remote, and use the branch call newRemoteBranch
+
+$> git push origin newRemoteBranch
+
+```
+
+
 
 Pull requests
 ```
