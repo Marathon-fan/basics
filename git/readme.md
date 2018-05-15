@@ -42,3 +42,13 @@ Pull requests
 Pull requests let you tell others about changes you've pushed to a GitHub repository. Once a pull request is sent, interested parties can review the set of changes, discuss potential modifications, and even push follow-up commits if necessary.
 ```
 
+Pushing to a remote
+```
+Use git push to push commits made on your local branch to a remote repository.
+
+The git push command takes two arguments:
+
+A remote name, for example, origin
+A branch name, for example, master
+```
+
