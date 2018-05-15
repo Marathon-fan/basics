@@ -1,13 +1,13 @@
 
 postion1:
-content
+content in conflicitBranch
 
 postion2:
-content
+content in conflictBranch
 
 
 postion3:
-content
+content in conflictBranch
 
 
 
