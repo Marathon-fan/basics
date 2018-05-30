@@ -5,6 +5,43 @@ Git fetch commands and options
 
 
 Fetch all of the branches from the repository. This also downloads all of the required commits and files from the other repository.
+The git fetch command downloads commits, files, and refs from a remote repository into your local repo. Fetching is what you do when you want to see what everybody else has been working on. It’s similar to svn update in that it lets you see how the central history has progressed, but it doesn’t force you to actually merge the changes into your repository. Git isolates fetched content as a from existing local content, it has absolutely no effect on your local development work.
+
+Fetched content has to be explicitly checked out using the git checkout command. 
+
+This makes fetching a safe way to review commits before integrating them with your local repository.
+
+git fetch example
+```
+git fetch coworkers feature_branch
+fetching coworkers/feature_branch
+
+git checkout coworkers/feature_branch
+Note: checking out coworkers/feature_branch'.
+
+
+```
+
+when we are in local/master,
+after 
+```
+git fetch origin
+```
+
+we may have several options:
+```
+git checkout origin/master               // remote master has renewed
+
+git checkout origin/develop              // remote dev has renewed
+
+git checkout origin/someFeature          // remote feature has renewed
+
+
+```
+
+
+
+
 
 ```
 git fetch <remote>
