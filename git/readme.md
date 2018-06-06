@@ -71,3 +71,14 @@ A remote name, for example, origin
 A branch name, for example, master
 ```
 
+# git stash    
+
+
+```
+git add -A
+git stash            // save all the tracks in a stash
+...
+git stash pop        // apply the stash to current branch, and the stash is gone
+git stash apply      // apply the stash to current branch, and the stash can be resued for other branch  
+
+```
