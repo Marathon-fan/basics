@@ -82,3 +82,22 @@ git stash pop        // apply the stash to current branch, and the stash is gone
 git stash apply      // apply the stash to current branch, and the stash can be resued for other branch  
 
 ```
+
+# delete a branch   
+
+delete a remote branch using
+```
+$> git push <remote_name> --delete <branch_name>
+Like $> git push origin --delete <branch_name>
+```
+
+To delete the local branch :
+```
+$> git branch -d branch_name
+
+or
+$ git branch -D branch_name
+
+```
+
+
