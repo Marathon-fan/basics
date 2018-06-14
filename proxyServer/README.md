@@ -11,13 +11,18 @@ When a proxy server receives a request for an Internet resource (such as a Web p
 ## Forward and reverse proxy servers  
 
 ### Forward proxy(on behalf of the client. The server thinks the requests are from proxy and doesn't know it's actually from the client)
-
+![sample of forward proxy](pics/forwardProxy.jpg)
 Forward proxies send the requests of a client onward to a web server. Users access forward proxies by directly surfing to a web proxy address or by configuring their Internet settings. Forward proxies allow circumvention of firewalls and increase the privacy and security for a user but may sometimes be used to download illegal materials such as copyrighted materials or child pornography.
 
 Reverse proxies transparently handle all requests for resources on destination servers without requiring any action on the part of the requester.
 
 
 ### Reverse proxies are used(on behalf of the servers, the client only knows the proxy, and doesn't know any information about the servers behind the proxy):   
+![sample 1 of reverse proxy](pics/reverseProxy1.jpg)
+
+![sample 2 of reverse proxy](pics/reverseProxy2.png)
+
+
 To enable indirect access when a website disallows direct connections as a security measure.    
 To allow for load balancing between severs.    
 To stream internal content to Internet users.    
