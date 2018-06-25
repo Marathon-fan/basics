@@ -1,6 +1,15 @@
 
 Git command———
 
+
+
+If you only want to download the latest changes and review them before merging or want to merge at a later time, git fetch is your friend. Like git pull, it will download latest changes. Unlike git pull, it will not merge those changes. You might wonder where the changes are stored since they are not merged. The answer is that they are stored in your local repository in what are called remote tracking branches. A remote tracking branch is a local copy (or mirror) of a remote branch. For example, when you run git branch -a you might notice origin/master in the output which is the remote tracking brach for master.
+
+
+In short: Both are similar with one key difference: git fetch only downloads latest changes where as git pull also merges them.
+
+///////////////////////////////////////////////////////////////
+
 Git fetch commands and options
 
 
