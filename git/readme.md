@@ -100,4 +100,7 @@ $ git branch -D branch_name
 
 ```
 
+# typical git flow   
+![typical git flow](./pics/gitFlow.png)
+
 
