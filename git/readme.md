@@ -100,6 +100,11 @@ $ git branch -D branch_name
 
 ```
 
+# Revert changes to modified files.
+git reset --hard
+
+
+
 # typical git flow   
 ![typical git flow](./pics/gitFlow.png)
 
