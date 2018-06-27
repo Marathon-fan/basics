@@ -101,9 +101,20 @@ $ git branch -D branch_name
 ```
 
 # Revert changes to modified files.
+```
 git reset --hard
+```
 
+or
+```
+//First get the commit ID
+git log
+or
+git log --oneline
 
+//then use the following cmd to revert into the a commit ID
+git revert commit-id
+```
 
 # typical git flow   
 ![typical git flow](./pics/gitFlow.png)
