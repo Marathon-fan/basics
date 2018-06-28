@@ -13,4 +13,8 @@ fast forward merge
 ```
 
 
-
+git merge from other branch
+```
+$> git fetch
+$> git merge origin/BLUE-2597
+```
