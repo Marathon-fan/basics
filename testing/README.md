@@ -6,7 +6,9 @@ The term ‘smoke testing’, it is said, came to software testing from a simila
 SMOKE TESTING Fundamentals
 DEFINITION
 
-```diff 
+```html
+<font color="red">
 - Smoke Testing, also known as “Build Verification Testing”, is a type of software testing that comprises of a non-exhaustive set of tests that aim at ensuring that the most important functions work. The results of this testing is used to decide if a build is stable enough to proceed with further testing.
+</font>
 ```
 
