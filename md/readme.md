@@ -17,3 +17,28 @@ for example
 
 
 ```
+
+## add colors
+
+use the following template to add colors
+```
+- ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `#f03c14 represents red`
+- ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) `#c5f015 represents green`
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `#1589F0 represents blue`
+```
+
+- ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) `#f03c14 represents red`
+- ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) `#c5f015 represents green`
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `#1589F0 represents blue`
+
+
+## add bold font  
+```
+<pre>
+sample <b>sample</b> sample
+</pre>
+```
+
+<pre>
+sample <b>sample</b> sample
+</pre>
