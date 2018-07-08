@@ -31,6 +31,14 @@ use the following template to add colors
 - ![#c5f015](https://placehold.it/15/c5f015/000000?text=+) `#c5f015 represents green`
 - ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `#1589F0 represents blue`
 
+## bold 
+
+```
+**This text will be bold**
+```
+
+**This text will be bold**
+
 
 ## add bold font  
 ```
