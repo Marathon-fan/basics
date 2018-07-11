@@ -31,6 +31,11 @@ git checkout master
 git merge hotfix_branch
 ```
 
+uat
+```
+always push code to uat, but never pull code from uat(as some code is unnecessary and will be not published)
+```
+
 Summary
 Here we discussed the Gitflow Workflow. Gitflow is one of many styles of Git workflows you and your team can utilize.
 
