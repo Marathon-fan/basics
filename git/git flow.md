@@ -34,6 +34,11 @@ git merge hotfix_branch
 uat
 ```
 always push code to uat, but never pull code from uat(as some code is unnecessary and will be not published)
+
+uat git flow
+
+https://www.linkedin.com/pulse/git-flow-extended-qa-uat-balazs-hideghety/
+
 ```
 
 Summary

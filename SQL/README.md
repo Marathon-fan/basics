@@ -87,3 +87,70 @@ where TO_DAYS(w2.RecordDate) = TO_DAYS(w1.RecordDate)  + 1 and w2.Temperature > 
 
 
 ```
+
+## CREATE OR REPLACE VIEW   
+
+```
+CREATE OR REPLACE VIEW xxx_view AS
+SELECT XX AS XX1,
+       XX AS XX2,
+FROM XXXX 
+WHERE (XXX);        
+
+```
+
+## CASE   
+
+```SQL
+SELECT player_name,
+       year,
+       CASE WHEN year = 'SR' 
+            THEN 'yes'
+            ELSE NULL 
+       END AS is_a_senior
+FROM benn.college_football_players playerTable
+
+```      
+
+```SQL
+SELECT player_name,
+       weight,
+       CASE WHEN year > 1999 THEN 'over 1999'
+            WHEN year > 1995 THEN '1996-1999'
+            ELSE '1995 or under' 
+       END AS year_group
+  FROM benn.college_football_players playerTable
+```
+
+```SQL
+
+CREATE
+    OR REPLACE VIEW bank_view AS
+
+SELECT bank.sfid AS bank_sf_id
+    ,bank.NAME AS bank_name
+    ,bank.lendi_bank_uuid__c AS bank_uuid
+    ,CAST(bank.acfbank_name__c AS VARCHAR(30)) AS bank_full_name
+    ,bank.acfbank_short_name__c AS bank_short_name
+    ,bank.onlineapplicationallowed__c AS bank_onlineapplicationallowed
+    ,bank.Initial_Assessment__c AS initial_assessment
+    ,bank.acfBankSlugName__c AS slug_name
+    ,bank.clickShow_on_Bank_Statements_Integration__c AS is_support_bankstatement
+    ,bank.serv_calc_tax_table__c AS tax_table_year
+    ,bank.living_expenses_driver__c AS living_expenses_driver
+    ,bank.payg_serv_calculator_accuracy__c AS payg_serv_calculator_accuracy
+    ,bank.sole_trader_serv_calculator_accuracy__c AS sole_trader_serv_calculator_accuracy
+    ,bank.company_serv_calculator_accuracy__c AS company_serv_calculator_accuracy
+    ,bank.Allows_non_f2f__c as allow_non_f2f
+    ,bank.living_expenses_range_type__c as living_expenses_range_type
+    ,CASE
+        WHEN bank.medicare_levy__c::text = '2% With Surcharge'::text THEN true
+        ELSE false
+    END as with_surcharge
+	,bank.buffer__c as buffer
+
+FROM salesforce.acfbank_detail__c bank
+WHERE (bank.isdeleted != true);
+
+```
+

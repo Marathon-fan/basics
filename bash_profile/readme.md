@@ -1,6 +1,6 @@
 
 
-# make your terminal more colorful and also to display the current git branch
+## make your terminal more colorful and also to display the current git branch
 
 for mac, add the following lines with vi ~/.bash_profile
 ```
