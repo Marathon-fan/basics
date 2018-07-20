@@ -161,16 +161,28 @@ console.log(getUserDOBAsIntV2(dob5));
 console.log('-----');
 
 function processData(input) {
-    var regex=/<a.*?href="(.*?)".*?>(.*?)<\/a>/ig;
-    var output=[];
-    console.log(input.match(regex));
-    input.replace(regex, function(_, href, text) {
-        console.log('+++,',_);
+    var regex1=/<a.*?href="(.*?)".*?>(.*?)<\/a>/ig;  // use non-greedy mode
+    var regex2=/<a.*href="(.*)".*>(.*)<\/a>/ig;      // greedy mode will give the wrong result
+
+    var output1=[];
+    //console.log(input.match(regex));
+    input.replace(regex1, function(_, href, text) {
+        //console.log('+++,',_);
         console.log('-', href);
         console.log('--', text);
-        output.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+        output1.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
     });
-    console.log(output.join('\n'));   
+    console.log(output1.join('\n')); 
+
+
+    var output2=[];
+    input.replace(regex2, function(_, href, text) {
+        //console.log('+++,',_);
+        console.log('-', href);
+        console.log('--', text);
+        output2.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+    });
+    console.log(output2.join('\n'));   
 } 
 
 let inputProcessData='\
@@ -184,5 +196,10 @@ console.log(processData(inputProcessData));
 
 /////////////////////////////////////////////////////test regular expression
 
+let testGreedyInput = '101000000000100';
 
+let regexGreedy = /1.*1/;
+let regexNonGreedy = /1.*?1/;
 
+console.log(testGreedyInput.match(regexGreedy));
+console.log(testGreedyInput.match(regexNonGreedy));

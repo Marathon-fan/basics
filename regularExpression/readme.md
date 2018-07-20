@@ -50,6 +50,20 @@ a-z0-9 -- Can be captured by (a-z0-9) and then can be referenced in a replacemen
 \b assert position at a word boundary  
 ```
 
+greedy vs non-greedy
+```js
+
+Consider the input 101000000000100.
+
+Using 
+"1.*1", * is greedy - it will match all the way to the end, and then backtrack until it can match  1, leaving you with 1010000000001.
+
+"1.*?1" is non-greedy. * will match nothing, but then will try to match extra characters until it matches  1, eventually matching 101.
+
+All quantifiers have a non-greedy mode: .*?, .+?, .{2,6}?, and even .??.
+
+```
+
 ### 1a
 
 
