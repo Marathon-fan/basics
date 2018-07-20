@@ -158,8 +158,31 @@ console.log(getUserDOBAsIntV2(dob3));
 console.log(getUserDOBAsIntV2(dob4));
 console.log(getUserDOBAsIntV2(dob5));
 /////////////////////////////////////////////////////test regular expression
+console.log('-----');
 
-// let testStr1 = 'abc';
-// let testStr2 = '153';
-// console.log('testStr1.match(/\d/g)', testStr1.match(/\d/g));
-// console.log('testStr2.match(/\d/g)', testStr2.match(/\d/g));
+function processData(input) {
+    var regex=/<a.*?href="(.*?)".*?>(.*?)<\/a>/ig;
+    var output=[];
+    console.log(input.match(regex));
+    input.replace(regex, function(_, href, text) {
+        console.log('+++,',_);
+        console.log('-', href);
+        console.log('--', text);
+        output.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+    });
+    console.log(output.join('\n'));   
+} 
+
+let inputProcessData='\
+2\
+<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm">Example Link</a></p>\
+<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm">More Link Examples...</a></div>\
+';
+
+console.log(processData(inputProcessData));
+
+
+/////////////////////////////////////////////////////test regular expression
+
+
+
