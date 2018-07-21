@@ -515,13 +515,81 @@ a;div;p
 
 ///////////////////////////////////////////////////////
 
-### xxx          
+### Find A Sub-Word
+          
+
+
+version1
+```
+https://www.hackerrank.com/challenges/find-substring/problem
+
+function calOccurence(s, wordArray) {
+    let res = 0;
+    wordArray.forEach(word => {
+        const index = word.indexOf(s);
+        if (index != -1 && index != 0 && index != word.length - s.length) {
+            res++;
+        }    
+    });
+    return res;
+}
+
+function processData(input) {
+    let newInput = input.split(/\n/g);
+    const N = parseInt(newInput[0]);  // the number of lines
+    let words = [];
+    const regex = /[\w|\d]+/g;
+    for (let i = 0; i < N; i++) {
+        const tmpRes = newInput[1 + i].match(regex);
+        tmpRes.forEach(word => {
+            words.push(word);
+        });
+    }
+    let Q = parseInt(newInput[1 + N]);  // the number the queries
+    for (let i = 0; i < Q; i++) {
+        const s = newInput[2 + N + i];
+        console.log(calOccurence(s, words));
+    }
+} 
+```
+
+
+
+
+version2(better than version1)
+```
+
+function processData(input) {
+    let newInput = input.split(/\n/g);
+    const N = parseInt(newInput[0]);  // the number of lines
+    let words = [];
+    const regex = /[\w|\d]+/g;
+    for (let i = 0; i < N; i++) {
+        const tmpRes = newInput[1 + i].match(regex);
+        tmpRes.forEach(word => {
+            words.push(word);
+        });
+    }
+    let Q = parseInt(newInput[1 + N]);  // the number the queries
+    for (let i = 0; i < Q; i++) {
+        const s = newInput[2 + N + i];
+        const regex2 = new RegExp(`\\w+(${s})\\w+`,"g");
+        let count = 0;
+        words.forEach(
+            word => {
+                const tmpRes = word.match(regex2);
+                if (tmpRes != null) {
+                    count += tmpRes.length;
+                }
+            }
+        );
+        console.log(count);
+    }
+} 
 
 ```
-https://www.hackerrank.com/challenges/matching-start-end/problem
 
-var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
-```
+
 
 ///////////////////////////////////////////////////////
 

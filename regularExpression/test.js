@@ -259,4 +259,51 @@ let inputProcessData2a = '2\n\
 
 
 console.log(processData2(inputProcessData2a));
+///////////////////
 
+let set = new Set();
+set.add('s');
+set.add(['a',['a','b']]);
+console.log(set);
+
+/////////////////
+
+console.log('////////////////////////////////');
+
+function processDataFindASubWord(input) {
+    let newInput = input.split(/\n/g);
+    const N = parseInt(newInput[0]);  // the number of lines
+    let words = [];
+    const regex = /[\w|\d]+/g;
+    for (let i = 0; i < N; i++) {
+        const tmpRes = newInput[1 + i].match(regex);
+        tmpRes.forEach(word => {
+            words.push(word);
+        });
+    }
+    let Q = parseInt(newInput[1 + N]);  // the number the queries
+    for (let i = 0; i < Q; i++) {
+        const s = newInput[2 + N + i];
+        const regex2 = new RegExp(`\\w+(${s})\\w+`,"g");
+        let count = 0;
+        words.forEach(
+            word => {
+                const tmpRes = word.match(regex2);
+                if (tmpRes != null) {
+                    count += tmpRes.length;
+                }
+            }
+        );
+        console.log(s, ':', count);
+    }
+} 
+
+const inputForFindASubWord = '1\n\
+existing pessimist optimist this is\n\
+4\n\
+is\n\
+im\n\
+ssi\n\
+this';
+
+processDataFindASubWord(inputForFindASubWord);
