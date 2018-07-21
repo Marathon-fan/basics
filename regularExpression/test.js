@@ -307,3 +307,90 @@ ssi\n\
 this';
 
 processDataFindASubWord(inputForFindASubWord);
+
+
+/////////////////https://www.hackerrank.com/challenges/alien-username/problem
+
+console.log('////////////////////////////////');
+
+function processDataForAlienUsername(input) {
+    let newInput = input.split(/\n/g);
+    const N = parseInt(newInput[0]);
+    let regex = /^[_|\.][\d]+([a-zA-Z]*)_?$/; 
+    for (let i = 0; i < N; i++) {
+        if (newInput[1 + i].match(regex)) {
+            console.log('VALID');
+        } else {
+            console.log('INVALID');
+        }
+    }
+
+} 
+
+const inputForAlienUsername = '3\n\
+_0898989811abced_\n\
+_abce\n\
+_09090909abcD0';
+
+processDataForAlienUsername(inputForAlienUsername);
+
+
+/////////////////https://www.hackerrank.com/challenges/ip-address-validation/forum
+
+console.log('////////////////////////////////');
+
+function processDataForIPAddressValidation(input) {
+    let newInput = input.split(/\n/g);
+    const N = parseInt(newInput[0]);
+    let regexIpV4 = /^([\d]{1,3})\.([\d]{1,3})\.([\d]{1,3})\.([\d]{1,3})$/g;
+    let regexIpV6 = /^([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4}):([\d|a-fA-F]{1,4})$/g;
+    let words = newInput.slice(1);
+    words.forEach( word => {
+        word = word.trim();
+        let ipV4Words = [];
+        let ipV4Matches = word.replace(regexIpV4, function(_, w1, w2, w3, w4) {
+            ipV4Words.push(w1);
+            ipV4Words.push(w2);
+            ipV4Words.push(w3);
+            ipV4Words.push(w4);
+        });
+        //console.log(ipV4Words);
+        if (ipV4Words != null && ipV4Words.length === 4) {
+            let ipV4Flag = true;
+            ipV4Words.forEach(
+                    item => {
+                    let intValue = parseInt(item);
+                    ipV4Flag = (intValue >= 0 && intValue <=255) ? (ipV4Flag && true) : false;
+                }
+            );
+            if (ipV4Flag) {
+              console.log('IPv4');
+              return; // return the word => func
+            }
+        }
+        if (word.match(regexIpV6) != null) {
+            console.log('IPv6');
+            return; // return the word => func
+        }
+        console.log('Neither');
+    });
+} 
+
+const inputForIPAddressValidation = '10\n\
+This line has junk text.  \n\
+121.18.19.20  \n\
+2001:0db8:0000:0000:0000:ff00:0042:8329\n\
+1050:1000:1000:a000:5:600:300c:326b\n\
+1050:1000:2000:ab00:5:600:300c:326a\n\
+1050:1000:3000:abc0:5:600:300c:326c\n\
+1051:1000:4000:abcd:5:600:300c:326b\n\
+22.231.113.64\n\
+22.231.113.164\n\
+222.231.113.64';
+processDataForIPAddressValidation(inputForIPAddressValidation);
+
+//a better version
+const Ipv4Pattern =/^((([0-1]?[0-9]?[0-9])|([2]?(([0-4]?[0-9])|(5?[0-5]))))\.){3}(([0-1]?[0-9]?[0-9])|([2]?(([0-4]?[0-9])|(5?[0-5]))))$/;
+const Ipv6Pattern =/^((([a-f0-9])?){3}[a-f0-9]\:){7}((([a-f0-9])?){3}[a-f0-9])$/;
+
+
