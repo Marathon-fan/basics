@@ -406,24 +406,111 @@ var Regex_Pattern = /o(?=oo)/g; //Do not delete `/` and `/g`.
 
 ///////////////////////////////////////////////////////
 
-### xxx          
+### Detect HTML links  
+          
 
+```js
+https://www.hackerrank.com/challenges/detect-html-links/problem
+
+console.log('-----');
+
+function processData(input) {
+    var regex1=/<a.*?href="(.*?)".*?>(.*?)<\/a>/ig;  // use non-greedy mode
+    var regex2=/<a.*href="(.*)".*>(.*)<\/a>/ig;      // greedy mode will give the wrong result
+
+    var output1=[];
+    //console.log(input.match(regex));
+    console.log('///////////');
+    input.replace(regex1, function(_, href, text) {
+        console.log('_:', _);
+        console.log('href:', href);
+        console.log('text:', text);
+        output1.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+    });
+    console.log(output1.join('\n')); 
+    console.log('///////////');
+
+    var output2=[];
+    input.replace(regex2, function(_, href, text) {
+        //console.log('+++,',_);
+        console.log('_:', _);
+        console.log('href:', href);
+        console.log('text:', text);
+        output2.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+    });
+    console.log(output2.join('\n'));   
+} 
+
+let inputProcessData='\
+2\
+<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm"><tag1>Example Link</tag1></a></p>\
+<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm"><tag2>More Link Examples...</tag2></a></div>\
+';
+
+console.log(processData(inputProcessData));
+
+
+
+
+let inputProcessData2='\
+13\
+<div class="portal" role="navigation" id=\'p-navigation\'>\
+<h3>Navigation</h3>\
+<div class="body">\
+<ul>\
+ <li id="n-mainpage-description"><a href="/wiki/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li>\
+ <li id="n-contents"><a href="/wiki/Portal:Contents" title="Guides to browsing Wikipedia">Contents</a></li>\
+ <li id="n-featuredcontent"><a href="/wiki/Portal:Featured_content" title="Featured content  the best of Wikipedia">Featured content</a></li>\
+<li id="n-currentevents"><a href="/wiki/Portal:Current_events" title="Find background information on current events">Current events</a></li>\
+<li id="n-randompage"><a href="/wiki/Special:Random" title="Load a random article [x]" accesskey="x">Random article</a></li>\
+<li id="n-sitesupport"><a href="//donate.wikimedia.org/wiki/Special:FundraiserRedirector?utm_source=donate&utm_medium=sidebar&utm_campaign=C13_en.wikipedia.org&uselang=en" title="Support us">Donate to Wikipedia</a></li>\
+</ul>\
+</div>\
+</div>\
+';
+
+console.log(processData(inputProcessData2));```
 ```
-https://www.hackerrank.com/challenges/matching-start-end/problem
-
-var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
-```
-
 
 
 ///////////////////////////////////////////////////////
 
-### xxx          
+### Detect HTML Tags
+          
 
 ```
-https://www.hackerrank.com/challenges/matching-start-end/problem
+https://www.hackerrank.com/challenges/detect-html-tags/problem
 
-var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+
+function processData(input) {
+    const regex1 = /<\s*(\w+).*?>/ig;
+    let tmpRes = new Set();
+    input.replace(regex1, function(_, x) {
+        tmpRes.add(x.trim());
+    });
+    let res = Array.from(tmpRes).sort().join(';');
+    console.log(res);
+} 
+
+
+
+let input = '2\
+<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm">Example Link</a></p>\
+<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm">More Link Examples...</a></div>\
+';
+
+
+```
+
+```
+
+2
+<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm">Example Link</a></p>
+<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm">More Link Examples...</a></div>
+
+a;div;p
+
+
 ```
 
 ///////////////////////////////////////////////////////

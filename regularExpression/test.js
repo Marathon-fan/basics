@@ -157,41 +157,6 @@ console.log(getUserDOBAsIntV2(dob2));
 console.log(getUserDOBAsIntV2(dob3));
 console.log(getUserDOBAsIntV2(dob4));
 console.log(getUserDOBAsIntV2(dob5));
-/////////////////////////////////////////////////////test regular expression
-console.log('-----');
-
-function processData(input) {
-    var regex1=/<a.*?href="(.*?)".*?>(.*?)<\/a>/ig;  // use non-greedy mode
-    var regex2=/<a.*href="(.*)".*>(.*)<\/a>/ig;      // greedy mode will give the wrong result
-
-    var output1=[];
-    //console.log(input.match(regex));
-    input.replace(regex1, function(_, href, text) {
-        //console.log('+++,',_);
-        console.log('-', href);
-        console.log('--', text);
-        output1.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
-    });
-    console.log(output1.join('\n')); 
-
-
-    var output2=[];
-    input.replace(regex2, function(_, href, text) {
-        //console.log('+++,',_);
-        console.log('-', href);
-        console.log('--', text);
-        output2.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
-    });
-    console.log(output2.join('\n'));   
-} 
-
-let inputProcessData='\
-2\
-<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm">Example Link</a></p>\
-<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm">More Link Examples...</a></div>\
-';
-
-console.log(processData(inputProcessData));
 
 
 /////////////////////////////////////////////////////test regular expression
@@ -203,3 +168,95 @@ let regexNonGreedy = /1.*?1/;
 
 console.log(testGreedyInput.match(regexGreedy));
 console.log(testGreedyInput.match(regexNonGreedy));
+
+/////////////////////////////////////////////////////test regular expression
+console.log('-----');
+
+function processData(input) {
+    var regex1=/<a.*?href="(.*?)".*?>(.*?)<\/a>/ig;  // use non-greedy mode
+    var regex2=/<a.*href="(.*)".*>(.*)<\/a>/ig;      // greedy mode will give the wrong result
+
+    var output1=[];
+    //console.log(input.match(regex));
+    console.log('///////////');
+    input.replace(regex1, function(_, href, text) {
+        console.log('_:', _);
+        console.log('href:', href);
+        console.log('text:', text);
+        output1.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+    });
+    console.log(output1.join('\n')); 
+    console.log('///////////');
+
+    var output2=[];
+    input.replace(regex2, function(_, href, text) {
+        //console.log('+++,',_);
+        console.log('_:', _);
+        console.log('href:', href);
+        console.log('text:', text);
+        output2.push(href.trim()+','+text.replace(/<.*?>/g,'').trim())
+    });
+    console.log(output2.join('\n'));   
+} 
+
+let inputProcessData='\
+2\
+<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm"><tag1>Example Link</tag1></a></p>\
+<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm"><tag2>More Link Examples...</tag2></a></div>\
+';
+
+console.log(processData(inputProcessData));
+
+
+
+
+let inputProcessData2='\
+13\
+<div class="portal" role="navigation" id=\'p-navigation\'>\
+<h3>Navigation</h3>\
+<div class="body">\
+<ul>\
+ <li id="n-mainpage-description"><a href="/wiki/Main_Page" title="Visit the main page [z]" accesskey="z">Main page</a></li>\
+ <li id="n-contents"><a href="/wiki/Portal:Contents" title="Guides to browsing Wikipedia">Contents</a></li>\
+ <li id="n-featuredcontent"><a href="/wiki/Portal:Featured_content" title="Featured content  the best of Wikipedia">Featured content</a></li>\
+<li id="n-currentevents"><a href="/wiki/Portal:Current_events" title="Find background information on current events">Current events</a></li>\
+<li id="n-randompage"><a href="/wiki/Special:Random" title="Load a random article [x]" accesskey="x">Random article</a></li>\
+<li id="n-sitesupport"><a href="//donate.wikimedia.org/wiki/Special:FundraiserRedirector?utm_source=donate&utm_medium=sidebar&utm_campaign=C13_en.wikipedia.org&uselang=en" title="Support us">Donate to Wikipedia</a></li>\
+</ul>\
+</div>\
+</div>\
+';
+
+console.log(processData(inputProcessData2));
+////////////////////
+
+
+var strForReplace = "Mr Blue has a blue house and a blue car";
+var resForReplace = strForReplace.replace(/blue|house|car/gi, function (x) {
+    return x.toUpperCase();
+});
+console.log(resForReplace);
+
+///////////////////
+console.log('////////////////////////////////');
+
+function processData2(input) {
+    //Enter your code here
+    const regex1 = /<\s*(\w+).*?>/ig;
+    let tmpRes = new Set();
+    input.replace(regex1, function(_, x) {
+        console.log(x);
+        tmpRes.add(x.trim());
+    });
+    // remove duplicate
+    let res = Array.from(tmpRes).sort().join(';');
+    console.log(res);
+} 
+
+let inputProcessData2a = '2\n\
+<p><a href="http://www.quackit.com/html/tutorial/html_links.cfm">Example Link</a></p>\n\
+<div class="more-info"><a href="http://www.quackit.com/html/examples/html_links_examples.cfm">More Link Examples...</a></div>';
+
+
+console.log(processData2(inputProcessData2a));
+
