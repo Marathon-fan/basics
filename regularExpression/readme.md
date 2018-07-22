@@ -626,7 +626,7 @@ processDataForAlienUsername(inputForAlienUsername);
 
 ### ip-address-validation          
 
-```
+```js
 https://www.hackerrank.com/challenges/ip-address-validation/problem
 
 function processDataForIPAddressValidation(input) {
@@ -676,22 +676,68 @@ const Ipv6Pattern =/^((([a-f0-9])?){3}[a-f0-9]\:){7}((([a-f0-9])?){3}[a-f0-9])$/
 
 ///////////////////////////////////////////////////////
 
-### xxx          
+### find-a-word          
 
-```
-https://www.hackerrank.com/challenges/matching-start-end/problem
+```js
+https://www.hackerrank.com/challenges/find-a-word/problem
 
-var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+
+
+function processDataForFindAWord(input) {
+    const regex1 = /[\w|\d]+/g;
+    let inArr = input.split(/\n/g);
+    const N = parseInt(inArr[0]);
+    let wArr = [];
+    inArr.slice(1, 1 + N).forEach(line => {
+        let tmp = line.match(regex1);
+        wArr = wArr.concat(tmp);
+    });
+    const T = parseInt(inArr[1 + N]);
+    for (let i = 0; i < T; i++) {
+        let target = inArr[1 + N + 1 + i];
+        let count = 0;
+        wArr.forEach(word => {
+            count += (word == target ? 1 : 0);
+        });
+        console.log(count);
+        // let regex2 = new RegExp(`^${target}$`, 'g');
+        // wArr.forEach(word => {
+        //     console.log(word.match(regex2));
+        // })
+    }
+} 
+
 ```
 ///////////////////////////////////////////////////////
 
-### xxx          
+### detect-the-email-addresses            
 
 ```
-https://www.hackerrank.com/challenges/matching-start-end/problem
+https://www.hackerrank.com/challenges/detect-the-email-addresses/problem
 
-var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+function processData(input) {
+    let inArr = input.split(/\n/g);
+    const N = parseInt(inArr[0]);
+    const regex = new RegExp(`\\w+@\\w+\\.\\w+`, 'g'); // if we use RegExp, we don't need the slash '/' for the start and end of regex
+                                                       // also, slash should escape
+    //const regex =  /\w+@\w+\.\w+/g;
+
+    let res = new Set();
+    inArr.slice(1, 1 + N).forEach(line => {
+        let tmp = line.match(regex);
+        //console.log('line:', line, ' tmp:', tmp);
+        if (tmp != null) {
+            tmp.forEach(item => {
+                res.add(item);
+            });
+        }
+    });
+    console.log(Array.from(res).sort().join(';'));
+} 
 ```
+
+
+
 ///////////////////////////////////////////////////////
 
 ### xxx          
