@@ -776,6 +776,56 @@ https://www.hackerrank.com/challenges/matching-start-end/problem
 var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
 ```
 
+///////////////////////////////////////////////////////
+
+### xxx          
+
+```
+https://www.hackerrank.com/challenges/matching-start-end/problem
+
+var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+```
+
+///////////////////////////////////////////////////////
+
+### xxx          
+
+```
+https://www.hackerrank.com/challenges/matching-start-end/problem
+
+var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+```
+
+///////////////////////////////////////////////////////
+
+### xxx          
+
+```
+https://www.hackerrank.com/challenges/matching-start-end/problem
+
+var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+```
+
+///////////////////////////////////////////////////////
+
+### xxx          
+
+```
+https://www.hackerrank.com/challenges/matching-start-end/problem
+
+var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+```
+
+///////////////////////////////////////////////////////
+
+### xxx          
+
+```
+https://www.hackerrank.com/challenges/matching-start-end/problem
+
+var Regex_Pattern = /^\d\w\w\w\w\.$/;        //"0qwer."
+```
+
 
 ///////////////////////////////////////////////////////
 
