@@ -62,12 +62,42 @@ Once the hotfix is complete it is merged to both develop and master
 ```
 
 /////////////////////////////////////
+
+
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `Master` 
+This is a highly stable branch that is always production-ready and contains the last release version of source code in production.
+
+
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `Develop` 
+Derived from the master branch, the development branch serves as a branch for integrating different features planned for an upcoming release. This branch may or may not be as stable as the master branch. It is where developers collaborate and merge feature branches.
+
+
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `Feature` 
+This derives from the develop branch and is used to develop features.
+
+
+
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `Release` 
+This also derives from develop branch but is used during releases.
+
+
+- ![#1589F0](https://placehold.it/15/1589F0/000000?text=+) `Hotfix` 
+This derives from the master branch and is used to fix a bug in the production branch that was identified after a release.
+
+
+
+
+
+
+/////////////////////////////////////
 git flow tools
+
+https://blog.axosoft.com/gitflow/
 
 https://gist.github.com/JamesMGreene/cdd0ac49f90c987e45ac
 
-
 https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
+
 
 
 mac install git flow
