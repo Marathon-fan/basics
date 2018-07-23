@@ -86,7 +86,7 @@ This derives from the master branch and is used to fix a bug in the production b
 
 
 
-
+![giflowForRelease](./pics/gitFlow-release.jpg)
 
 
 /////////////////////////////////////

@@ -119,4 +119,8 @@ git revert commit-id
 # typical git flow   
 ![typical git flow](./pics/gitFlow.png)
 
+# git flow FeatureDevReleaseHotfixMaster  
+
+![giflowForRelease](./pics/gitFlow-release.jpg)
+
 
