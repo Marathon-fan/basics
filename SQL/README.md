@@ -154,3 +154,22 @@ WHERE (bank.isdeleted != true);
 
 ```
 
+
+## COALESCE  
+
+Return the first non-null expression in a list:
+
+```SQL
+
+
+
+SELECT COALESCE(NULL, NULL, NULL, 'W3Schools.com', NULL, 'Example.com');
+
+SELECT COALESCE(NULL, 1, 2, 56);
+
+
+SELECT COALESCE(NULL, 1, 2, 'W3Schools.com');  // THIS EXAMPLE WILL NOT PASS UNDER POSTGRESQL AS IT THINKS ALL ELEMENTS HERE ARE INTEGER
+
+
+
+```
