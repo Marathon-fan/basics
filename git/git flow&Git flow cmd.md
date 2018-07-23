@@ -61,4 +61,31 @@ If an issue in master is detected a hotfix branch is created from master
 Once the hotfix is complete it is merged to both develop and master
 ```
 
+/////////////////////////////////////
+git flow tools
+
+https://gist.github.com/JamesMGreene/cdd0ac49f90c987e45ac
+
+
+https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
+
+
+mac install git flow
+```
+brew install git-flow
+```
+
+```
+$ git flow
+usage: git flow <subcommand>
+
+Available subcommands are:
+   init      Initialize a new git repo with support for the branching model.
+   feature   Manage your feature branches.
+   release   Manage your release branches.
+   hotfix    Manage your hotfix branches.
+   support   Manage your support branches.
+   version   Shows version information.
+```
+
 
