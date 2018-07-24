@@ -31,7 +31,15 @@ $> git show v-1.0   // we can see the information we entered
 
 ## comparing tags   
 
+```
+add/change content to the project, and git commit
+then
 
+$> git tag -a v-1.1
+
+// add more content
+
+```
 
 
 
