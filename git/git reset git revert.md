@@ -17,7 +17,7 @@ Reset does different things in different contexts.(three main Areas(working area
 ```
 
 
-# Revert changes to modified files.   
+# Revert changes to modified files.(current branch)   
 ```
 git reset --hard
 ```
@@ -50,3 +50,5 @@ will add a new commit named revert xxx
 
 **Revert doesn't mean undo**
 
+
+// git test
