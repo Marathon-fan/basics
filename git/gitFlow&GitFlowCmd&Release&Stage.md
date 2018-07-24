@@ -61,6 +61,16 @@ If an issue in master is detected a hotfix branch is created from master
 Once the hotfix is complete it is merged to both develop and master
 ```
 
+///////////////////////////////////// a few examples of constraints
+```
+1 rebase, don't merge / merge, don't rebase
+
+2 only developer X can do Y on branch Z
+
+3 Don't push to a red build(broken build = when a build is broken and cannot work)  
+
+4 Squash a feature to a single commit before you merge it to a master
+```
 /////////////////////////////////////
 
 

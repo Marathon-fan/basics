@@ -38,3 +38,14 @@ $:> git diff 957fbc92b123030c389bf8b4b874522bdf2db72c ce489262a1ee34340440e55a0b
 ```
 
 
+////////////////////////
+
+Reflogs track when Git refs were updated in the local repository. 
+
+
+```
+git reflog HEAD
+
+git show 28b344f HEAD@{11}
+
+```
