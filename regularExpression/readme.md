@@ -183,35 +183,20 @@ const getUserDOBAsInt = (applicant_dob) => {
       console.log('applicant_dob.substring(0,4).match(/\d+/g)', applicant_dob.substring(0,4).match(/\d+/g));
       console.log('applicant_dob.substring(applicant_dob.length - 4, applicant_dob.length).match(/\d/g)', applicant_dob.substring(applicant_dob.length - 4, applicant_dob.length).match(/\d/g));
     }
-    if (applicant_dob == false || applicant_dob == undefined || applicant_dob.length === 0) {
-        return 1918;
-    }
-    let str1 = applicant_dob.substring(0,4).match(/\d/g);
-    if (str1 != null && str1.length === 4) {
-        return parseInt(applicant_dob.substring(0,4));
-    }
-    let str2 = applicant_dob.substring(applicant_dob.length - 4, applicant_dob.length).match(/\d/g);
-    if (str2 != null && str2.length === 4) {
-        return parseInt(applicant_dob.substring(applicant_dob.length - 4, applicant_dob.length));
-    }
-    return 1918;
-}
-
-const getUserDOBAsIntV2 = (applicant_dob) => { // version 2 is better than version1
-
-
-    let DEFAULT_DOB_INT = 1918;
+    const DEFAULT_DOB_INT = 1918;
     if (applicant_dob == false || applicant_dob == undefined || applicant_dob.length === 0) {
         return DEFAULT_DOB_INT;
     }
-    if (applicant_dob.match(/\d\d\d\d\D\d\d\D\d\d/)) {
-      return parseInt(applicant_dob.substring(0,4));
+    if (applicant_dob.match(/\d\d\d\d\D\d\d\D\d\d/) || applicant_dob.match(/\d\d\d\d\D\d\D\d/) || applicant_dob.match(/\d\d\d\d\D\d\D\d\d/) || applicant_dob.match(/\d\d\d\d\D\d\d\D\d/)) {
+        return parseInt(applicant_dob.substring(0,4));
     }
-    if (applicant_dob.match(/\d\d\D\d\d\D\d\d\d\d/)) {
-      return parseInt(applicant_dob.substring(applicant_dob.length - 4, applicant_dob.length));
+    if (applicant_dob.match(/\d\d\D\d\d\D\d\d\d\d/) || applicant_dob.match(/\d\D\d\D\d\d\d\d/) || applicant_dob.match(/\d\D\d\d\D\d\d\d\d/) || applicant_dob.match(/\d\d\D\d\D\d\d\d\d/) ) {
+        return parseInt(applicant_dob.substring(applicant_dob.length - 4, applicant_dob.length));
     }
     return DEFAULT_DOB_INT;
 }
+
+
 ```
 
 

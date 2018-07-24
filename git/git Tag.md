@@ -66,6 +66,8 @@ $> git tag -a v-0.8-alpha 0f23998
 
 ## using tags with github   
 
+in github, releases are tracked by tags
+
 ```
 $> git push origin v-0.9-beta   
 
