@@ -89,6 +89,36 @@ This derives from the master branch and is used to fix a bug in the production b
 ![giflowForRelease](./pics/gitFlow-release.jpg)
 
 
+/////////////////////////////////////featureAndStageBranch      
+
+Only you understand how the code on develop and feature/xyz aligns, no one else. It is only you who can merge the two flows correctly in a discerning way. Even with the default merging strategies, which are far less dangerous than -S ours or -X theirs you still always have to review the result.
+
+You may need some help of course, and git will offer some. For example, you can use git recorded resolutions - rerere to help with making the same correct merge decision after you made one initially.
+
+A fairly common, and relatively simple model, using the names you’ve supplied for the branches, could work for you like this,
+
+**develop** is the branch where the main thrust of development occurs
+
+**xyz** is the branch where you develop the feature xyz
+
+**xyz_stage** is the branch where you merge the develop and the xyz code, keeping that branch stable in line with the respective stable points of develop and xyz. This is also the branch that you’d eventually merge back into develop when you are ready to release feature xyz or part of thereof.
+
+
+The above assumes that not only you merge xyz into xyz_stage but that you also merge develop into xyz_stage from time to time and make sure that the portions of xyz so far released to xyz_stage work and pass the relevant tests in conjunction with the code from develop.
+
+Nevertheless, you still have to choose how do you make the xyz branch, where you work on the feature, aware of the progress on develop.
+
+The cleanest option is - don’t make it aware. That’s why you have xyz_stage where the two development flows come together. This approach is feasible and sane as long as the development of xyz is not prolonged.
+
+The second option is to merge xyz_stage back into xyz when you are happy with the staging branch. That way you will have stable point that you can continue and develop the xyz feature on top.
+
+Here's a simple illustration of the process, with comments:
+
+
+![StageBranchForFeature](./pics/featureStage.png)
+
+
+
 /////////////////////////////////////
 git flow tools
 
