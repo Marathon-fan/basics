@@ -39,8 +39,44 @@ $> git tag -a v-1.1
 
 // add more content
 
+$> git tag v-1.2 -m "Release 1.2"
+
+git tag --list
+
+
 ```
 
+**use the following cmd to compare differences between two tags**
+```
+$> git diff v-1.0 v-1.2   
+```
+
+
+## tagging a specific commit    
+
+
+```
+$> git log --oneline    // so that we see the commit number
+$> git tag -a v-0.9-beta <commitNUmber> //$> git tag -a v-0.9-beta 6967d5c
+$> git tag -a v-0.8-alpha 0f23998
+
+
+
+```
+
+## using tags with github   
+
+```
+$> git push origin v-0.9-beta   
+
+then we can see the snapshot stored in repo's release page   
+
+$> git push origin v-1.1
+
+$> git push origin master --tags   // push, also add any missing tags
+
+```
+ 
 
 
 
