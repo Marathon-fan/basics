@@ -1,5 +1,42 @@
 
+# tag
 
+tag is nothing more than a label.
+used for milestone, etc   
+
+## lightweight tags
+
+```
+$> git tag <tagName>
+
+$> git tag --list               // show all the tag names
+
+$> git tag --delete <tagName>
+
+```
+
+## annotated tags  
+
+```
+$> git tag -a v-1.0 
+then enter information   
+
+$> git tag --list  
+
+$> git log --oneline --graph --decorate --all   
+
+$> git show v-1.0   // we can see the information we entered
+
+```
+
+## comparing tags   
+
+
+
+
+
+
+## git tag   
 
 Tags are ref's that point to specific points in Git history. Tagging is generally used to capture a point in history that is used for a marked version release (i.e. v1.0.1). A tag is like a branch that doesn’t change. Unlike branches, tags, after being created, have no further history of commits.
 
