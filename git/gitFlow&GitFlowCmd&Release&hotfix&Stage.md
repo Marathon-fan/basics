@@ -160,13 +160,27 @@ release flow
 ```
 
 # on develop branch   
-git flow release start 0.1.0  
+git flow release start 0.1.0      # then we are on new branch called release/0.1.0
+
+# then do some changes on this branch 
 
 git flow release publish 0.1.0    # then we can see this branch on remote(like bitbucket, github)
 
-git flow release finish 0.1.0     # then the release branch is merge to master, and we are switched to master branch
+git flow release finish 0.1.0     # then input the tag info the release branch is merge to master, and the release branch is merged both to master and develop
+                                  # release branch 'release/0.1.0' has been deleted
+Deleted branch release/0.1.0 (was 8d7c47b).
 
-git push                          # then push the master to remote
+Summary of actions:
+- Latest objects have been fetched from 'origin'
+- Release branch has been merged into 'master'
+- The release was tagged '0.1.0'
+- Release branch has been back-merged into 'develop'
+- Release branch 'release/0.1.0' has been deleted
+
+git checkout develop
+git push                          # then push the develop(after merging release to ) to remote
+git checkout master
+git push                          # then push the master(after merging release to ) to remote
 
 ```
 
