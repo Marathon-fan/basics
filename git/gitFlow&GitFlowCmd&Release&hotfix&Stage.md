@@ -173,6 +173,31 @@ git push                          # then push the master to remote
 
 
 /////////////////////////////////////
+git flow hotfix 
+
+The process is almost identical to the release process although **the hotfix branch is created from the master branch** to reflect a change to the last release.
+
+```
+# on dev branch
+git pull
+git checkout master
+# on master branch
+git pull
+git flow hotfix start v0.1.1
+
+Summary of actions:
+- A new branch 'hotfix/v0.1.1' was created, based on 'master'
+- You are now on branch 'hotfix/v0.1.1'
+
+echo 'v0.1.1' > version.txt  # or other hotfix operations
+git add -A
+git commit -m "updated version file to v0.1.1; completed hotfix"   
+git flow hotfix finish -m 'v0.1.1' v0.1.1   # the changes will automatically be merged to master and develop 
+# finally, we are on develop branch
+git push    # push the changes to remote(push the develop and master to remote)
+```
+
+/////////////////////////////////////
 git flow tools
 
 https://blog.axosoft.com/gitflow/
