@@ -173,3 +173,16 @@ SELECT COALESCE(NULL, 1, 2, 'W3Schools.com');  // THIS EXAMPLE WILL NOT PASS UND
 
 
 ```
+
+## groupBy(used with aggregate functions)   
+
+The GROUP BY statement is often used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result-set by one or more columns.
+
+```SQL
+SELECT count(click_applicant__c), gender__c  FROM salesforce.click_applicant__c group by gender__c ;
+
+SELECT COUNT(CustomerID), Country
+FROM Customers
+GROUP BY Country
+ORDER BY COUNT(CustomerID) DESC;
+```

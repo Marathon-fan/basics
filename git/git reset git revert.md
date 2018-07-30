@@ -45,6 +45,12 @@ git revert commit-id
 will add a new commit named revert xxx
 ```
 
+revert a revert(when you mistakenly reverted something)
+```
+Reverting the revert will do the same thing, with a messier commit message:
+git revert <commit sha of the revert>
+```
+
 
 **Be careful when you revert merge commits**
 
