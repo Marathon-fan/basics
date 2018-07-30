@@ -128,6 +128,49 @@ Here's a simple illustration of the process, with comments:
 ![StageBranchForFeature](./pics/featureStage.png)
 
 
+/////////////////////////////////////
+git flow release
+
+
+init
+```
+~/Desktop/chat_pics/AceEdustation/program/aceedustation/aes1-new [develop] $ git flow init
+
+Which branch should be used for bringing forth production releases?
+   - develop
+   - leon
+   - master
+Branch name for production releases: [master] master
+
+Which branch should be used for integration of the "next release"?
+   - develop
+   - leon
+Branch name for "next release" development: [develop] develop
+
+How to name your supporting branch prefixes?
+Feature branches? [feature/] 
+Release branches? [release/] 
+Hotfix branches? [hotfix/] 
+Support branches? [support/] 
+Version tag prefix? [] 
+
+```
+
+release flow
+```
+
+# on develop branch   
+git flow release start 0.1.0  
+
+git flow release publish 0.1.0    # then we can see this branch on remote(like bitbucket, github)
+
+git flow release finish 0.1.0     # then the release branch is merge to master, and we are switched to master branch
+
+git push                          # then push the master to remote
+
+```
+
+
 
 /////////////////////////////////////
 git flow tools
