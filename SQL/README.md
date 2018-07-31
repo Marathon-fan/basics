@@ -60,7 +60,7 @@ where p1.Email = p2.Email and p1.id > p2.id
 
 ## Distinct    
 
-```
+```SQL
 182. Duplicate Emails
 https://leetcode.com/problems/duplicate-emails/description/
 
@@ -70,7 +70,16 @@ Person p1, Person p2
 where p1.Email = p2.Email and p1.Id != P2.Id
 ```
 
+## distinct and in
 
+```SQL
+
+https://leetcode.com/problems/customers-who-never-order/description/
+
+select Name as Customers from Customers where Id NOT in
+(select distinct(CustomerId) from Orders)
+
+```
 
 
 ## TO_DAYS        

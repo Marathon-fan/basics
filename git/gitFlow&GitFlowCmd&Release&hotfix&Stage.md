@@ -182,6 +182,11 @@ git push                          # then push the develop(after merging release 
 git checkout master
 git push                          # then push the master(after merging release to ) to remote
 
+# if we use UAT, release branch also needs to be merged to UAT
+git checkout useraccept
+git pull
+git merge release/0.1.0           # merge release/0.1.0 to UAT 
+
 ```
 
 
