@@ -57,6 +57,20 @@ where p1.Email = p2.Email and p1.id > p2.id
 
 ```
 
+## select from two tables   
+
+```SQL
+SELECT E1.Name as Employee
+FROM Employee AS E1, Employee AS E2
+WHERE E1.Salary > E2.Salary and E1.ManagerId = E2.ID
+```
+
+## select and order by   
+select * from cinema
+where id % 2 = 1 and description != 'boring'
+order by rating desc;
+
+
 
 ## Distinct    
 
@@ -184,8 +198,35 @@ SELECT COALESCE(NULL, 1, 2, 'W3Schools.com');  // THIS EXAMPLE WILL NOT PASS UND
 ```
 
 
+## SQL aggregate functions syntax
 
-## groupBy(used with aggregate functions)   
+**An aggregate function allows you to perform a calculation on a set of values to return a single scalar value.** 
+
+
+The following are the most commonly used SQL aggregate functions:
+
+```
+AVG – calculates the average of a set of values.
+COUNT – counts rows in a specified table or view.
+MIN – gets the minimum value in a set of values.
+MAX – gets the maximum value in a set of values.
+SUM – calculates the sum of values.
+```
+
+```SQL
+aggregate_function (DISTINCT | ALL expression)
+```
+**The  ALL modifier is used by default if you do not specify any modifier explicitly.**
+
+
+
+Notice that all aggregate functions above ignore NULL values except for the COUNT function.
+
+
+We often use aggregate functions with the GROUP BY and HAVING clauses of the SELECT statement.
+
+
+### groupBy(used with aggregate functions)   
 
 The GROUP BY statement is often used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result-set by one or more columns.
 
@@ -200,7 +241,7 @@ ORDER BY COUNT(CustomerID) DESC;
 
 
 
-## group by xxx    having count(yyy) > 
+### group by xxx    having count(yyy) > 
 
 ```SQL    
 
