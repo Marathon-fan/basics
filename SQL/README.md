@@ -183,6 +183,8 @@ SELECT COALESCE(NULL, 1, 2, 'W3Schools.com');  // THIS EXAMPLE WILL NOT PASS UND
 
 ```
 
+
+
 ## groupBy(used with aggregate functions)   
 
 The GROUP BY statement is often used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result-set by one or more columns.
@@ -195,3 +197,17 @@ FROM Customers
 GROUP BY Country
 ORDER BY COUNT(CustomerID) DESC;
 ```
+
+
+
+## group by xxx    having count(yyy) > 
+
+```SQL    
+
+select class
+from courses
+group by class
+having count( distinct student) > 4;
+```
+
+
