@@ -1,0 +1,1638 @@
+
+
+https://gist.github.com/ohallors/e3562eeecedb15c637b9b0d18954a4e6
+
+
+
+rich@quicloud.com
+
+----------------------------------introduction
+1 chapter 1: basics
+1) purpose of an EDW
+2) shortcoming of self-owned EDWs
+3) columnar databases
+4) benefits of EDW as a cloud-based managed service
+5) benefits of Redshift
+6) how companies use Redshift
+7) 3rd party visualization tools
+8) how redshift compares to other analytics tools
+
+2 chapter 2: redshift basics
+1) architecture
+2) data loading
+3) importance of data distribution
+4) basic redshift usage
+5) creating a cluster
+6) configuring SQL workbench
+7) loading data into cluster
+8) querying cluster
+
+3 chapter 3: advanced topics
+1) data loading best practices
+2) running basic queries
+3) tips for tuning queries and table design
+4) installing tableau
+5) connecting tableau to Redshift
+6) using Tableau
+
+//------what is a data warehouse
+1 OLTP: many fast reads & writes
+
+OLTP -> ETL(extract, transform, load) every one hour -> Data Warehouse(or EDW)-- OLAP("reporting" reads on massive amounts of data)
+
+Data Mart: specific to business function
+DM1: business
+	best selling product
+	worst performing store
+	sales commissions?
+	shipping times
+
+DM2: marketing
+	best ad source
+	best prods/area
+	best ad ROI
+	demographics
+	commonly purchased together?
+
+2 OLTP vs OLAP
+OLTP                                          OLAP
+RDMBS                                        EDW or DW
+fast(insert/update)                        analytics queries on huge datasets(known queries)
+ad-hoc queries                             query speed not priority
+heavily concurrent                         few internal users
+heavily normalized via 3NF                  aggregated data(for speed)
+typically row-oriented                      typically column-oriented
+not meant for heavy volumn                 hugely scalable(100s of TB or PB)
+(upper limit of fewTB)
+
+3 dataware housr -- high level architecture
+1) row-oriented
+2) column-oriented			
+
+the storage structure of row-oriented and column-oriented is different
+
+
+4 STAR  schema
+1) logical representation of data
+2) "Fact" tables at core
+3) "Dimension" tables linked via foreign key relationships
+
+Fact table: long, skinny, granular
+
+dimension table: short, wide, "joined"
+
+5 Data Cubes
+
+6 review of terms
+1) EDW ir DW
+2) Data mart
+3) data cube
+4) start schema
+5) facts and dimensions
+6) columnar vs row storage
+7) ETL 
+
+predictive analytics
+data minng
+BI or Business intelligence
+Visualization tools
+
+
+//------shortcomings of self-owned DW
+1 costs
+
+
+2 grow limitations
+
+3 management overhead
+task
+1) installation
+(1)software
+(2)hardware
+(3)networking
+(4)space
+2)maintenance
+(1)replacing failed hardware
+(2)software patches
+3)upgrading
+(1)software
+(2)occasionally hardware
+(3)usually involved multi-day outage
+4) compromising 
+(1)data cube re-materialization(hours, days of outage)
+(2)shuffling
+
+4 vendor lock-in
+per TB storage costs of self-owned EDW: around 5-10 times that of aws redshift
+
+
+//------befenfits of a public cloud DW
+1 cost
+
+less cost
+pay only for what you need, only when you need it
+
+2 infinite scale
+control over
+1) storage amount
+2) CPU
+3) RAM
+4) Cluster size(on demand)
+
+3 workload customizability
+
+workload 2: CPU Heavy multi-year data miining
+needs top-end nodes(lots of CPU, SSD)
+300 nodes
+
+4 managed service benefits
+1) efficiency of experts
+ so you can focus on business problem
+2) on-demand provisioning
+ remove roadblicks, increases innovatioon
+3) pay as you go model
+ use only what you need, only when you need it
+4) scalable and elastic
+  remove limitations/allows "breathe in, breathe out"
+5) control where you need
+ top "80%" common tuning and optimization supported
+
+5 drawbacks
+1) efficiency of exprot
+  you give up control
+2) on-demand provisioning
+ user needs understanding of provisioning
+3) pay as you go model
+ more expensive under heavy use scenarios
+4) scalable and elastic
+  can be expensive(easy to create = easy to forget)
+5) control where you need
+ what if you don't fit into the top "80%" use case?
+6) can increase public cloud lock-in
+  you'll want to begin using other services, esp storage(s3)
+7) can increase latency
+ if your data sources are hosted elsewhere
+8) security?
+ the concern that isn't...except maybe where the NSA is involved
+
+
+//------benefits of redshift
+1 costs
+2 speed
+3 ease of use
+4 service integration
+5 HA/DR(disaster recovery)
+6 security
+7 auditing and logging
+8 monitoring
+9 compatibility
+
+
+//------how companies use redshift
+pinterest
+what is pinterest
+1) a visual sharing and discovery tool
+2) 10s of millions of users
+3) billions of pings
+4) big data uses:
+(1) emasure KPI
+(2) Run experiments
+(3) build recommendations
+(4) fighting spam
+
+big data V1 at pinterest
+
+Kafka			---ETL--->S3---ETL--->Hadoop-->Hive Queries ---> end users
+                                                |----->redshift/mySQL-->SQL queries/analytics dashboards--> end users                                                   
+MySQL                   ---ETL--->S3---ETL--->Hadoop-->Hive Queries ---> end users
+HBase  Redis            ---ETL--->S3---ETL--->Hadoop-->Hive Queries ---> end users
+
+
+redshift integration
+HDFS - ----------Hive ETL------ ->            AWS S3 -       ---- Native Copy -----------> redshift
+unstructured(unclean)                  structured(unclean)                              Optimized (compressed)
+ 
+the native copy is super fast
+
+redshift compared to hadoop--
+unlike hadoop where you have hundreds of paramters to tune, Redshift gives you good performance out of the box. If you want to tune, there are really
+only two parameters you care about:
+1 system stats(it's based on postgres)
+2 your keys(sort key & distribution key)
+                    --- Jie Li(Data infrastructure at Pinterest)
+
+Big data at pinerest
+1 don't have dedicated DBA
+2 saw 25-100 times performance increase over Hive
+
+HiveQL
+
+Nasdaq with 
+Powers over 70 marketplaces in over 50 countries
+used a legacy warehouse
+millions a year in CAPEX
+limited to 1 yr of data capacity
+orders, trades, competitive analysis data
+extremely sensitive data(security high concern)
+  audit heavly
+
+to enabe security aspects, they use:
+1 VPC(virtual private cloud)
+2 direct connect
+3 data encrypiton in flight(SSL via API & JDBC)
+  secured with ceritficates
+
+to enable security aspects, they use:
+  data encryption at rest(S3 and redshift AES-256)
+     HSM to manage own keys(keys passed to Redshift on as-needed basis)
+     Also turned on native Redshift encrypiton
+
+Migration to Redshift
+   completed ~1100 talbe migration in 7 man-months
+   reduced cost 43% below legacy
+   write average about 3 rows/microsecond
+   best write rates seen were ~ 2.76 million rows/second
+
+migration to redshift
+   upwards of 14B rows inserted/day
+   optimized queries now running faster than legacy
+      SQL rewrites, Key(sort & distribution) changes
+   increased resiliency
+
+multiple clusters in production
+     NASDAQ Data Warehouse
+     RMS(Records Management system (RMS) ????)
+     BI
+     TradeInfo(SSD based, small)
+
+use SNS/SQS to notify clients when data is loaded
+SNS--single notification service
+SQS--single queue service 
+
+have passed internal audits for 
+1 information security
+2 internal audit
+3 nasdql risk committee       
+  
+External 
+SOX
+SEC   
+
+//------third party visualization tools overview
+purpose
+
+the goal: dashboards
+daily, weekly and quarterly reports
+competitive analysis
+A/B Testing
+metrics and monitoring
+
+the data: disparate
+data sources;
+finance(expense)
+social media
+sales(Pos)
+inventory and supply chain(JIT SCM)
+Operations(payroll, HR)
+Log data(web logs, email logs, chat & phone support)
+
+
+commonalities
+JDBC/ODBC connectors
+  data source and back-end agnostic
+point-and-click, drag and drop
+rich visualization palettes
+SQL-based
+SDKs
+
+major playsers
+ableau
+microstrategy
+qlikview 
+IBM
+SAS
+Microsoft
+
+
+//------how redshift compares to other analytics tools
+vs RDBMS-based DWs
+oracle, mysql, sqlserver
+
+vs commercial DWs
+vs Hadoop
+vs other cloud-based EDWs
+vs in-memory analysis engines
+vs NoSQL engines
+vs columnar databases
+
+----------------------------------Redshift basics-architecture
+
+//------high level architecture
+ BI client ------------------ cluster(leader + work nodes)   <------------ data load (ingestion source)
+                                       
+leader node
+   1 per cluser
+   2 can also run i "single node" demo mode
+
+plans coordinates and oversees query execution
+SQL(PostGreSQL 8.0.2) endpoint
+Stores "metadata" and statistics
+  these stats heavily influence query performance
+
+compute nodes
+   1 each contain subset of data
+      1) in local, columnar storage
+      2) act as redudant mirrors of each other
+   2 execute queries in parallel
+   3 load data in parallel
+
+leader node  --- cluster
+    |
+compute node * N
+    |
+ingestion source
+
+//------
+aws.amazon.com/redshift/pricing
+
+dense compute
+dense storage
+
+----------------------------------Redshift basics-data loading
+DATA LOADING
+1 options for loading data
+2 data distribution concepts
+  slices, vacuuming
+
+//------compute nodes
+disk storage for each node divided into "slices"
+
+# of vCPUs = # of slices
+like:
+DS2.XL: 4 slices    // dense storage
+DC2.8XL: 32 slices  // dense compute
+
+//------Basic load flow
+split data into multiple file
+  enables parallel load speed
+upload files into S3
+Run COPY command to pupulate//copy file into redshift table
+Query to verify data load
+
+example:
+copy <table_name>
+from 's3://<bucket_name>/<object_prefix>'
+credentials 'aws_access_key_id=<access-key-id>;aws_secret_access_key=<secret-access-key>'
+options;
+
+
+//------data load best practices
+split data into multiple files
+  enables parallel load speed
+  ideal to have 1 file per slice
+     3 nodes DS1XL (2n/slice) = 6 files(3*2)
+  Each file should be (about) equal size
+  Ideal (post-compressed) file size between 1MB-1GB
+
+//------Options for data load
+   COPY command(native)
+      S3(fastest)
+      DynamoDB
+      EMR-Amazon Elastic MapReduce (Amazon EMR), an Amazon EC2 service based on Hadoop. 
+      does automatic compression encoding
+
+   alternative methods
+      SSH from remote host
+      data pipeline
+      RDS sync
+
+//------Data pipeline
+    AWS Data Pipeline
+
+example:
+    amazon EC2-----task:copy log files(daily task)--->amazon S3---task:launch data analysis(weekly task)--->Amazon EMR
+
+example:
+    massive fact stores---> data pre-processor--->EMR input S3 bucket---> EMR data transformer---> EMR output S3 bucket---> data post-processor---> analytics documents  
+      
+//------RDS SYNC
+    log file--------------->|                        |                  
+                            |scalable data servers   |-->amazon redshift-> query away
+     mySQL------>bin log--->|    
+                    |
+
+//------vacuum
+large # of delete/insert operations after initial load causes fragmentation
+   vacuum like a "defrag" for Redshift
+   should run after large bulk update or delete
+   should also run periodically for tables under normal INSERT/UPDATE/DELETE load
+   can be expensive(cpu, disk)
+      but can run specific types of VACUUM (sort, delete, etc)
+
+----------------------------------Redshift basics-data distribution concepts
+
+the goals of data distribution
+the 3 types and use cases of each
+replicate a star schema in Redshift
+
+//------data distribution-it's critical
+"the distribution strategy that you choose for your database has important consequences for query performance,
+storage requirements, data loading, and maintenance."    --- AWS documentation
+
+//------data distribution goals
+1 achieve the best paralled execution possible
+   ideally, each node works as hard as every other
+2 minimize data movement during query execution
+   tries to execute joins on nodes which have joined data local
+
+//------data distribution types
+   defined at table creation time
+   affects speed of joins, disk usage
+   And...affects how data is moved from node to node on queries
+   Must be one of :
+     1) EVEN
+     2) KEY
+     3) ALL
+
+1 EVEN DISTRIBUTION TYPE
+the default
+Drop dead simple round-robin distribution
+
+2 Key distribution
+The rows are distributed according to the values in one column. The leader node will attempt to place matching values on the same node slice. If you distribute a pair of tables on the joining keys, the leader node collocates the rows on the slices according to the values in the joining columns so that matching values from the common columns are physically stored together.
+
+
+3 ALL distribution
+A copy of the entire table is distributed to every node. Where EVEN distribution or KEY distribution place only a portion of a table's rows on each node, ALL distribution ensures that every row is collocated for every join that the table participates in.
+ALL distribution multiplies the storage required by the number of nodes in the cluster, and so it takes much longer to load, update, or insert data into multiple tables. ALL distribution is appropriate only for relatively slow moving tables; that is, tables that are not updated frequently or extensively. Small dimension tables do not benefit significantly from ALL distribution, because the cost of redistribution is low.
+
+
+collocate
+verb
+3rd person present: collocates
+ˈkɒləkeɪt/Submit
+1.
+LINGUISTICS
+(of a word) be habitually juxtaposed with another with a frequency greater than chance.
+"‘maiden’ collocates with ‘voyage’"
+2.
+rare
+place side by side or in a particular relation.
+"McAndrew was a collocated facility with Argentia Naval Station"
+nounLINGUISTICS
+plural noun: collocates
+ˈkɒləkət/Submit
+1.
+a word that is habitually juxtaposed with another with a frequency greater than chance.
+
+
+----------------------------------LAB: CREATING Redshift cluster
+create a 4 node cluster from the web console
+   cost : $1.00/hr (billed forward each hour)
+update VPC for external access
+create an IAM user for security
+Browse the AWS Redshift web GUI
+Stopping, snapshotting, restarting the cluster
+
+//------create a 4 node cluster from the web console
+aws webpage -> database -> amazon redshift -> launch cluster
+1) cluster identifier       redshifttest
+2) database name            redshiftdb
+3) database port            5439
+4) master user name         admin
+5) master password          redshiftAdmin1
+
+then next
+
+node type: dc2.large
+cluster type: multi node
+number of compute nodes: 4
+
+then continue,
+
+then launch cluster
+
+we will create s3 storage in the same region to avoid across region fee.
+
+//------open another window
+aws webpage -> networking & content delivery -> VPC
+
+ security-> security group, -> choose the default security group(sg-6cf36d0a default vpc-8c6e6ce8 default VPC security group)
+
+--> click inbound rules -> edit -> add another rule -> 
+type: custom tcp rule
+protocol: tcp
+port range: 5439
+source: 0.0.0.0/0
+
+--> save
+
+
+//------create an IAM user
+
+under aws console page ->  security, identity and compliance -> IAM -> users -> add user
+
+user name: redshift-user
+Access key ID: AKIAJEQ5FX6K5NOQA2UA
+Secret access key: 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
+Password: IGWi&DZ@eEbs 
+
+download csv file:
+
+AM -> users -> click user name(redshift-user) -> add permissions -> attach existing policies directly ->
+select "AmazonRedshiftFullAccess" -> next -> add permissions 
+
+
+
+//------go back to redshift web console page
+
+click our redshifttest instance -> record jdbc url string:
+jdbc:redshift://redshifttest.cyqbjunaa29a.ap-southeast-2.redshift.amazonaws.com:5439/redshiftdb
+
+// stopping, snapshotting, restarting the cluster
+
+under redshift -> clusters -> cluster -> backup -> take snapshot
+
+under redshift -> clusters -> cluster -> shutdown(when we shutdown, we can create snapshot name)   //3 cent per G per month
+
+under redshift -> snapshots, -> create snapshot -> restore from snapshot
+
+we can recover from snapshot.
+
+//
+
+redshift -> clusters -> performance
+
+
+//
+
+redshift -> clusters -> queries
+
+
+in connect client, we can download jdbc driver
+
+
+
+
+----------------------------------LAB: configure SQL workbench
+1 configure SQL workbench
+  keepalive, 'autocommit'
+2 connect to the cluster via SQL workbench
+3 tour SQL workbench
+4 run some sample queries
+
+www.sql-workbench.net/manual/install.html
+
+http://docs.aws.amazon.com/redshift/lastest/mgmt/configuring-connections.html#connecting-drivers
+
+//------launch sql work bench
+1)
+java -jar sqlworkbench.jar
+
+2) inside sqlworkbench, create a new driver call redshift, and import redshift jdbc driver,
+
+click our redshifttest instance -> record jdbc url string:
+jdbc:redshift://redshifttest.cyqbjunaa29a.ap-southeast-2.redshift.amazonaws.com:5439/redshiftdb
+
+ master user name         admin
+ master password          redshiftAdmin1
+
+then check auto commit box
+
+in connect script->script to keep connection alive, input:
+select version();
+
+idle time: 15
+
+then save profile
+
+then press OK
+
+then in statement console, input:
+select distinct(tablename) from pg_table_def where schemaname = 'public';
+
+then
+select version();
+
+PostgreSQL 8.0.2 on i686-pc-linux-gnu, compiled by GCC gcc (GCC) 3.4.2 20041017 (Red Hat 3.4.2-6.fc3), Redshift 1.0.1503
+
+we can open multiple tabs
+
+
+//------
+
+
+----------------------------------lab: loading data into S3
+1 create S3 bucket
+2 download sample data set
+3 load sample data into s3
+4 review common sample data issues
+
+
+//------
+in aws console -> storage -> s3 -> create a bucket called "redshift-sydney-mytest07nov2017"
+
+inside that bucket, create a folder called "data-load",
+
+download data from 
+http://docs.aws.amazon.com/redshift/latest/dg/tutorial-loading-data-download-files.html
+
+unzip the data file
+
+upload the file into s3-> S3redshift-sydney-mytest07nov2017/data-load
+
+----------------------------------LAB: loading data into REDSHIFT - part1
+1 set up data-loading script with your credentials
+2 create tables
+
+3 Run COPY commands(debug their outputs and resolve)
+4 load large dataset with COPY
+
+//------
+copy table 
+from 's3://redshift-sydney-mytest07nov2017/data-load/[key-prefix]'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+options;
+
+user name: redshift-user
+Access key ID: AKIAJEQ5FX6K5NOQA2UA
+Secret access key: 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
+Password: IGWi&DZ@eEbs 
+
+
+//------
+select distinct(tablename) from pg_table_def where schemaname = 'public';
+
+create the following tables:
+
+CREATE TABLE part 
+(
+  p_partkey     INTEGER NOT NULL,
+  p_name        VARCHAR(22) NOT NULL,
+  p_mfgr        VARCHAR(6),
+  p_category    VARCHAR(7) NOT NULL,
+  p_brand1      VARCHAR(9) NOT NULL,
+  p_color       VARCHAR(11) NOT NULL,
+  p_type        VARCHAR(25) NOT NULL,
+  p_size        INTEGER NOT NULL,
+  p_container   VARCHAR(10) NOT NULL
+);
+
+CREATE TABLE supplier 
+(
+  s_suppkey   INTEGER NOT NULL,
+  s_name      VARCHAR(25) NOT NULL,
+  s_address   VARCHAR(25) NOT NULL,
+  s_city      VARCHAR(10) NOT NULL,
+  s_nation    VARCHAR(15) NOT NULL,
+  s_region    VARCHAR(12) NOT NULL,
+  s_phone     VARCHAR(15) NOT NULL
+);
+
+CREATE TABLE customer 
+(
+  c_custkey      INTEGER NOT NULL,
+  c_name         VARCHAR(25) NOT NULL,
+  c_address      VARCHAR(25) NOT NULL,
+  c_city         VARCHAR(10) NOT NULL,
+  c_nation       VARCHAR(15) NOT NULL,
+  c_region       VARCHAR(12) NOT NULL,
+  c_phone        VARCHAR(15) NOT NULL,
+  c_mktsegment   VARCHAR(10) NOT NULL
+);
+
+
+CREATE TABLE dwdate 
+(
+  d_datekey            INTEGER NOT NULL,
+  d_date               VARCHAR(19) NOT NULL,
+  d_dayofweek          VARCHAR(10) NOT NULL,
+  d_month              VARCHAR(10) NOT NULL,
+  d_year               INTEGER NOT NULL,
+  d_yearmonthnum       INTEGER NOT NULL,
+  d_yearmonth          VARCHAR(8) NOT NULL,
+  d_daynuminweek       INTEGER NOT NULL,
+  d_daynuminmonth      INTEGER NOT NULL,
+  d_daynuminyear       INTEGER NOT NULL,
+  d_monthnuminyear     INTEGER NOT NULL,
+  d_weeknuminyear      INTEGER NOT NULL,
+  d_sellingseason      VARCHAR(13) NOT NULL,
+  d_lastdayinweekfl    VARCHAR(1) NOT NULL,
+  d_lastdayinmonthfl   VARCHAR(1) NOT NULL,
+  d_holidayfl          VARCHAR(1) NOT NULL,
+  d_weekdayfl          VARCHAR(1) NOT NULL
+);
+CREATE TABLE lineorder 
+(
+  lo_orderkey          INTEGER NOT NULL,
+  lo_linenumber        INTEGER NOT NULL,
+  lo_custkey           INTEGER NOT NULL,
+  lo_partkey           INTEGER NOT NULL,
+  lo_suppkey           INTEGER NOT NULL,
+  lo_orderdate         INTEGER NOT NULL,
+  lo_orderpriority     VARCHAR(15) NOT NULL,
+  lo_shippriority      VARCHAR(1) NOT NULL,
+  lo_quantity          INTEGER NOT NULL,
+  lo_extendedprice     INTEGER NOT NULL,
+  lo_ordertotalprice   INTEGER NOT NULL,
+  lo_discount          INTEGER NOT NULL,
+  lo_revenue           INTEGER NOT NULL,
+  lo_supplycost        INTEGER NOT NULL,
+  lo_tax               INTEGER NOT NULL,
+  lo_commitdate        INTEGER NOT NULL,
+  lo_shipmode          VARCHAR(10) NOT NULL
+);
+
+----------------------------------LAB: loading data into REDSHIFT - part2
+Run COPY commands(debug their outputs and resolve)
+Load large dataset with COPY
+
+//------
+
+copy table 
+from 's3://redshift-sydney-mytest07nov2017/data-load/[key-prefix]'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+options;
+
+//------lower slot count to speed the loading of data
+set wlm_query_slot_count to 2;   // 
+
+//------change s3 policy
+aws console -> IAM -> click our user(redshift-user) ->  Attach existing policies directly -> add AmazonS3FullAccess -> next -> add permissions
+
+
+//------
+copy part 
+from 's3://redshift-sydney-mytest07nov2017/data-load/part-csv.tbl'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+csv
+null as '\000';
+
+then we see the result:
+Warnings:
+Load into table 'part' completed, 49999 record(s) loaded successfully.
+
+0 rows affected
+COPY executed successfully
+
+Execution time: 30.02s
+
+
+
+modify customer-fw-manifest to :
+
+{
+  "entries": [
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-000"},
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-001"},
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-002"},
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-003"},
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-004"},    
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-005"},
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-006"}, 
+    {"url":"s3://redshift-sydney-mytest07nov2017/data-load/customer-fw.tbl-007"}
+ ]
+}
+
+
+
+copy customer 
+from 's3://redshift-sydney-mytest07nov2017/data-load/customer-fw-manifest'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+fixedwidth 'c_custkey:10, c_name:25, c_address:25, c_city:10, c_nation:15, c_region:12, c_phone:15, c_mktsegment:10'
+maxerror 10
+acceptinvchars as '^'
+manifest;
+
+
+
+//------see failure reason
+select query, substring(filename, 22, 25) as filename, line_number as line,
+substring(colname, 0, 12) as column, type, position as pos,
+substring(raw_line, 0, 30) as line_text,
+substring(raw_field_value, 0, 15) as filed_text,
+substring(err_reason, 0, 45) as reason
+from stl_load_errors
+order by query desc
+limit 10;
+
+
+//------
+
+we can also load data from other aws regions
+
+//------
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+----------------------------------LAB: loading data into REDSHIFT - part3
+
+
+//------
+select count(*) from customer;
+select count(*) from dwdate;
+select count(*) from lineorder;
+select count(*) from part;
+select count(*) from supplier;
+
+//------
+select distinct(tablename) from pg_table_def where schema
+
+//------
+
+delete from customer;
+delete from part;
+delete from supplier;
+
+//------recreate the data from aws sample data repository
+
+copy part from 's3://awssampledbuswest2/ssbgz/part'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=L3npxBiWDgAF92el4QxtXzQkXZ7YWwl/nDjbhGVa'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy dwdate from 's3://awssampledbuswest2/ssbgz/dwdate'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy supplier from 's3://awssampledbuswest2/ssbgz/supplier'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy customer from 's3://awssampledbuswest2/ssbgz/customer'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy lineorder from 's3://awssampledbuswest2/ssbgz/lineorder'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+//------check stl_load_commits table to see the last commit
+select query, trim(filename) as file, curtime as updated 
+from stl_load_commits order by updated desc;
+
+
+//------check data distribution on all tables
+select slice, col, num_values, minvalue, maxvalue
+from svv_diskusage
+where name='customer' and col=0
+order by slice,col;
+
+
+select slice, col, num_values, minvalue, maxvalue
+from svv_diskusage
+where name='supplier' and col=0
+order by slice,col;
+
+//------look for disk spills
+select query, step, rows, workmem, label, is_diskbased
+from svl_query_summary
+where query = [your-query-id]
+order by workmem desc;
+
+//------check column, distkey, sortkey for a given table
+select "column", type, encoding, distkey, sortkey, "notnull"
+from pg_table_def
+where tablename = 'lineorder';
+
+
+select "column", type, encoding, distkey, sortkey, "notnull"
+from pg_table_def
+where tablename = 'customer';
+
+
+
+//------
+
+select count(*) from lineorder;
+
+//------snapshot the data
+redshift -> clusters-> backup, then create a snapshot called "all-data-loaded"
+
+we can recover the cluster and data from "redshift -> snapshots -> actions -> recover from snapshot"
+then we can cover all the data and cluster ndoes
+
+
+//------
+
+
+
+
+
+----------------------------------LAB: QUERYING REDSHIFT CLUSTER - part1
+
+1 run some simple queries
+2 run non-optimized queries
+  identify issues
+  resolve
+
+//------show tables
+select distinct(tablename) from pg_table_def where schemaname = 'public';
+
+select count(*) from customer;
+
+select count(*) from dwdate;
+
+select count(*) from lineorder;
+
+select count(*) from part;
+
+select count(*) from supplier;
+
+//------select too much data
+select * from lineorder; // to big!! should be cancelled while executing query
+
+select count(*) from lineorder;
+
+//------create table as select
+create table customer_asia as select * from customer where c_region = "ASIA";  // not accepted
+create table customer_asia as select * from customer where c_region = 'ASIA';  // not accepted
+
+
+//------alter table name
+alter table customer_asia rename to customer_asia_2017
+
+
+select count(*) from customer;
+select count(*) from customer_asia_2017;
+
+//------between clause (orders on dec 1st, 1994)
+select count(*) from lineorder where lo_orderdate between 19941201 and 19941202
+
+select * from lineorder where lo_orderdate between 19941201 and 19941202  // after it returns, we can save data as from sql workbench
+
+//------restriction on one dimension
+select sum(lo_extendedprice * lo_discount) as revenue
+from lineorder, dwdate
+where lo_orderdate = d_datekey
+and d_year = 1997
+and lo_discount between 1 and 3
+and lo_quantity < 24;
+
+
+
+//------restion on two dimensions
+select sum(lo_revenue), d_year, p_brand1
+from lineorder, dwdate, part, supplier
+where lo_orderdate = d_datekey
+and lo_partkey = p_partkey
+and lo_suppkey = s_suppkey
+and p_category = 'MFGR#12'
+and s_region = 'AMERICA'
+group by d_year, p_brand1
+order by d_year, p_brand1;
+
+run each query twice, the first contains compile time, so we just count the second time as the result.
+
+//------a more complex query
+select c_city, s_city, d_year, sum(lo_revenue) as revenue
+from customer, lineorder, supplier, dwdate
+where lo_custkey = c_custkey
+and lo_suppkey = s_suppkey
+and lo_orderdate = d_datekey
+and (c_city = 'UNITED KI1' or 
+c_city = 'UNITED KI5')
+and (s_city = 'UNITED KI1' or
+s_city = 'UNITED KI5')
+and d_yearmonth = 'Dec1997'
+group by c_city, s_city, d_year
+order by d_year asc, revenue desc;
+
+//------
+
+distribution key
+
+//------
+
+
+----------------------------------LAB: QUERYING REDSHIFT CLUSTER - part2
+
+
+//------drop all the table
+drop table part cascade;  
+drop table supplier cascade;
+drop table customer cascade;
+drop table dwdate cascade;
+drop table lineorder cascade;
+//CASCADE [Optional] Drops all projections that include the table.
+//NOTE: You cannot use the CASCADE option when dropping external tables. For more information, see Working with External Tables in the Administrator's Guide.
+
+
+//------create the optimized tables(sortkey, distkey, diststyle)
+
+create the following tables:
+
+CREATE TABLE part 
+(
+  p_partkey     INTEGER NOT NULL       sortkey distkey,
+  p_name        VARCHAR(22) NOT NULL,
+  p_mfgr        VARCHAR(6),
+  p_category    VARCHAR(7) NOT NULL,
+  p_brand1      VARCHAR(9) NOT NULL,
+  p_color       VARCHAR(11) NOT NULL,
+  p_type        VARCHAR(25) NOT NULL,
+  p_size        INTEGER NOT NULL,
+  p_container   VARCHAR(10) NOT NULL
+);
+
+
+CREATE TABLE supplier 
+(
+  s_suppkey   INTEGER NOT NULL sortkey,
+  s_name      VARCHAR(25) NOT NULL,
+  s_address   VARCHAR(25) NOT NULL,
+  s_city      VARCHAR(10) NOT NULL,
+  s_nation    VARCHAR(15) NOT NULL,
+  s_region    VARCHAR(12) NOT NULL,
+  s_phone     VARCHAR(15) NOT NULL
+)diststyle all;
+
+CREATE TABLE customer 
+(
+  c_custkey      INTEGER NOT NULL sortkey,
+  c_name         VARCHAR(25) NOT NULL,
+  c_address      VARCHAR(25) NOT NULL,
+  c_city         VARCHAR(10) NOT NULL,
+  c_nation       VARCHAR(15) NOT NULL,
+  c_region       VARCHAR(12) NOT NULL,
+  c_phone        VARCHAR(15) NOT NULL,
+  c_mktsegment   VARCHAR(10) NOT NULL
+)diststyle all;;
+
+
+CREATE TABLE dwdate 
+(
+  d_datekey            INTEGER NOT NULL sortkey,
+  d_date               VARCHAR(19) NOT NULL,
+  d_dayofweek          VARCHAR(10) NOT NULL,
+  d_month              VARCHAR(10) NOT NULL,
+  d_year               INTEGER NOT NULL,
+  d_yearmonthnum       INTEGER NOT NULL,
+  d_yearmonth          VARCHAR(8) NOT NULL,
+  d_daynuminweek       INTEGER NOT NULL,
+  d_daynuminmonth      INTEGER NOT NULL,
+  d_daynuminyear       INTEGER NOT NULL,
+  d_monthnuminyear     INTEGER NOT NULL,
+  d_weeknuminyear      INTEGER NOT NULL,
+  d_sellingseason      VARCHAR(13) NOT NULL,
+  d_lastdayinweekfl    VARCHAR(1) NOT NULL,
+  d_lastdayinmonthfl   VARCHAR(1) NOT NULL,
+  d_holidayfl          VARCHAR(1) NOT NULL,
+  d_weekdayfl          VARCHAR(1) NOT NULL
+)diststyle all;
+
+
+CREATE TABLE lineorder 
+(
+  lo_orderkey          INTEGER NOT NULL,
+  lo_linenumber        INTEGER NOT NULL,
+  lo_custkey           INTEGER NOT NULL,
+  lo_partkey           INTEGER NOT NULL distkey,
+  lo_suppkey           INTEGER NOT NULL,
+  lo_orderdate         INTEGER NOT NULL sortkey,
+  lo_orderpriority     VARCHAR(15) NOT NULL,
+  lo_shippriority      VARCHAR(1) NOT NULL,
+  lo_quantity          INTEGER NOT NULL,
+  lo_extendedprice     INTEGER NOT NULL,
+  lo_ordertotalprice   INTEGER NOT NULL,
+  lo_discount          INTEGER NOT NULL,
+  lo_revenue           INTEGER NOT NULL,
+  lo_supplycost        INTEGER NOT NULL,
+  lo_tax               INTEGER NOT NULL,
+  lo_commitdate        INTEGER NOT NULL,
+  lo_shipmode          VARCHAR(10) NOT NULL
+);
+
+
+select distinct(tablename) from pg_table_def where schemaname = 'public';
+
+//------load data from sampledataset
+
+
+copy part from 's3://awssampledbuswest2/ssbgz/part'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=L3npxBiWDgAF92el4QxtXzQkXZ7YWwl/nDjbhGVa'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy dwdate from 's3://awssampledbuswest2/ssbgz/dwdate'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy supplier from 's3://awssampledbuswest2/ssbgz/supplier'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy customer from 's3://awssampledbuswest2/ssbgz/customer'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+copy lineorder from 's3://awssampledbuswest2/ssbgz/lineorder'
+credentials 'aws_access_key_id=AKIAJEQ5FX6K5NOQA2UA;aws_secret_access_key=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'
+gzip
+compupdate off
+region 'us-west-2';
+
+
+
+//------we re-run the following three queries:
+
+//------restriction on one dimension
+select sum(lo_extendedprice * lo_discount) as revenue
+from lineorder, dwdate
+where lo_orderdate = d_datekey
+and d_year = 1997
+and lo_discount between 1 and 3
+and lo_quantity < 24;
+
+
+//------restriction on two dimensions
+select sum(lo_revenue), d_year, p_brand1
+from lineorder, dwdate, part, supplier
+where lo_orderdate = d_datekey
+and lo_partkey = p_partkey
+and lo_suppkey = s_suppkey
+and p_category = 'MFGR#12'
+and s_region = 'AMERICA'
+group by d_year, p_brand1
+order by d_year, p_brand1;
+
+run each query twice, the first contains compile time, so we just count the second time as the result.
+
+//------a more complex query
+select c_city, s_city, d_year, sum(lo_revenue) as revenue
+from customer, lineorder, supplier, dwdate
+where lo_custkey = c_custkey
+and lo_suppkey = s_suppkey
+and lo_orderdate = d_datekey
+and (c_city = 'UNITED KI1' or 
+c_city = 'UNITED KI5')
+and (s_city = 'UNITED KI1' or
+s_city = 'UNITED KI5')
+and d_yearmonth = 'Dec1997'
+group by c_city, s_city, d_year
+order by d_year asc, revenue desc;
+
+
+
+//------according to the tutor's data, after optimization(distkey, sortkey and diststyle), most queries are much faster(we execute each query twice and use the time of the second result)
+  
+     no optimization        with optimization
+q1     7.1s                       0.87s
+q2     10.33s                     14.48s
+q3     11.33s                     1.18s  
+
+//------
+
+explain select sum(lo_revenue), d_year, p_brand1
+from lineorder, dwdate, part, supplier
+where lo_orderdate = d_datekey
+and lo_partkey = p_partkey
+and lo_suppkey = s_suppkey
+and p_category = 'MFGR#12'
+and s_region = 'AMERICA'
+group by d_year, p_brand1
+order by d_year, p_brand1;
+
+//------WHAT ARE SORT KEYS?
+WHAT ARE SORT KEYS?
+
+When you create a table, you can optionally define one or more columns as sort keys. These columns are being used as data is loaded into the table to sort it accordingly. During this process some metadata is also generated, e.g. the min and max values of each block are stored and can be accessed directly without iterating the data every time a query executes.
+These metadata pass to the query planner which in turn exploits this information to generate execution plans that are more performant.
+Based on the above it becomes obvious that Sort Keys is an important performance tuning parameter of our tables that,
+It can improve query performance and
+Its tuning depends heavily on the queries we plan to execute and thus to go through the analysis to be performed by the analyst is important in finding the most efficient Sort Keys.
+
+
+//------WHAT ARE SORT DISTKEYs?
+Lists are partitioned by DISTKEYs. If you’re going to have two large lists that are linked together in some way (a customer and her orders, for example), you’re going to want to distribute portions of that list based on a key, a DISTKEY, that keeps this data together logically. 
+
+
+----------------------------------DATA LOADING BEST PRACTICES -- part1
+
+1 Staging data to S3
+2 Splitting data
+3 Compressing considerations
+4 COPY and VACUUM tuning and optimization
+5 Debugging load errors
+6 gotchas and limitations
+
+
+//------Staging data to S3
+1 highest throughput available
+2 DynamoDB, EMR are 2nd highest
+3 Can use CTAS when copying from internal table
+    "CREATE TALBE AS" -OR- "INSERT INTO SELECT"
+4 If you must use SQL for ingestion:
+    use multi-row inserts
+    don't do large # of singleton INSERT, UPDATE, DELETE
+
+//------S3 US-EAST REGION CAUTION
+1 careful with "us-east-1" (Virgina) region
+   it's "eventually consistent" for read-after-write
+   use "s3-external-1.amazonaws.com" endpoint only to access
+2 if you use it, verify data pressence before starting COPY
+   Via S3 "listObjects" API call
+   Validate data load after COPY
+3 All regions are EvCon for OVERWRITE and DELETE
+
+//------SPLITTING DATA
+1 Redshift creates 1 slice per core(vCPU, not ECU)
+2 Ideal load will leverage 1 S3 file per core
+    So if you have 10 DC1.large nodes(2 cores each), how many files is ideal?   20 (= 2 * 10)
+
+3 Can use linux "split -[#] N" command for splitting a large file
+
+4 Compress AFTER splitting (esp. if using GZIP)
+   this format is "non-splittable"
+5 try to ensure even amout of data per split
+6 per-sort data based on Redshift-side "sortkey"
+7 also efficient to split to a multiple of core count(32, 64, 96, etc)
+
+
+//------compression considerations
+1 use either GZIP or LZO
+   LZO good for CHAR, VARCHAR
+2 compress after splitting(must do if using GZIP)
+   is "non-splittable"
+3 can additionally encrypt data
+   transparent if using SSE
+   can also supply own encryption key(then give COPY command the "master symmetric key" attr)
+
+
+//------ONGOING LOADS
+1 consider granular(daily, weekly) tables PLUS large "everything" table
+     allows fast queries on last days, weeks data
+     can accomplish with CTAS(insert into "main" table, then CTAS to "daily")
+2 consider selectively denormalizing commonly joined data into large fact table rather than several joined dimensions
+       accelerates query speed at the cost of flexibility
+
+
+----------------------------------DATA LOADING BEST PRACTICES -- part2
+//------COPY AND VACUUM
+1 always try to use copy from S3
+   there is an overhead to keeping data sorted
+   set to run periodically at night
+   ensure copied data is sorted in sortkey order
+2 VACCUUM when:
+   You don't use COPY
+   You do large # of INSERT, UPDATE, DELETE
+   Use ANALYZE command to refresh statistics
+
+//------workload manager
+1 redshift has a workload manager(wlm)
+2 allows setting up of priority queues(slow, fast queries)
+3 "wlm_query_slot_count" parameter controls memory allocation
+   up to 50(higher the number, fewer the resources for each )
+   shared by all queues
+   always use at least 2
+   can speed COPY and VACUUM operations
+
+//------Post-load verify
+1 check your data distribution(look for data skew)
+ select slice, col, num_values, minvalue, maxvalue
+    from svv_diskusage where name= 'customer'
+      and col = 0 order by slice, col
+
+//------debugging load errors
+errors displayed in web console
+   entire panel dedicated to query performance and erroring
+stored statically in the STL_LOAD_ERRORS table
+   can adjust COPY:MAXERROR parameter to throttle or COPY:NOLOAD to validate first--especially useful for missing and malformed data
+
+throttle
+ˈθrɒt(ə)l/Submit
+noun
+1.
+a device controlling the flow of fuel or power to an engine.
+"the engines were at full throttle"
+2.
+archaic
+a person's throat, gullet, or windpipe.
+verb
+1.
+attack or kill (someone) by choking or strangling them.
+"she was sorely tempted to throttle him"
+synonyms:	choke, strangle, strangulate, garrotte, asphyxiate, smother, suffocate, stifle More
+2.
+control (an engine or vehicle) with a throttle.
+
+//------GOTCHAS and limitations
+Redshift doesn't support "upsert"  // what is upsert
+   load to stage table, join against those records
+
+Redshift doesn't support primary key constraint
+   Re-ingesting source data will DUPLICATE records
+
+Some UTF-8 characters not supported
+
+Concurrent "read after write" must be scheduled client-side
+
+"UPSERT" definition
+
+"UPSERT" is a DBMS feature that allows a DML statement's author to atomically either insert a row, or on the basis of the row already existing, UPDATE that existing row instead, while safely giving little to no further thought to concurrency. One of those two outcomes must be guaranteed, regardless of concurrent activity, which has been called "the essential property of UPSERT". Examples include MySQL's INSERT...ON DUPLICATE KEY UPDATE, or VoltDB's UPSERT statement.
+The absence of this feature from Postgres has been a long-standing complaint from Postgres users [2] [3] [4] [5].
+
+gotcha
+ˈɡɒtʃə/Submit
+informal
+noun
+plural noun: gotchas
+1.
+NORTH AMERICAN
+an instance of catching someone out or exposing them to ridicule.
+2.
+NORTH AMERICAN
+a sudden unforeseen problem.
+
+
+----------------------------------TUNING QUERY PERFORMANCE   -- part1
+
+TABLE DESIGN
+   sortkey and distkey selection
+   compression encodings
+
+leader node statistics
+
+troubleshooting
+
+//------table design
+1 you'll almost definitely get it wrong in the beginning
+2 .. and that's OK(it's easy to optimize)
+3 really comes down to:
+    sortkey(affects disk layout, compression, speed)
+    distkey(affects slice distribution, query-time data copy)
+    keeping leader node stats current(ANALYZE)
+4 Decide your keys based on access pattern, re-iterate
+    establish baseline, change one variable, validate
+
+//------sort key considerations
+1 there is overhead to keeping data sorted
+2 when new ndata is added to a table that has a sort key, that new
+data is not place into any particular slice
+    thus the need to run periodic VACUUM and move it to proper zone map(min, max)
+     and run ANALYZE
+
+
+//------DETERMINING SORTKEY
+1  CAN specify multiple columns as sortkey
+       must specify as interleaved or compound
+
+2  when choosing sort key, look at query patterns and add sort keys on
+   columns that are commonly filtered
+
+3 for queries involving "recent" data, specify timestamp column as sort key(don't put timestamp val in char)
+
+4 for range queries or "equality"("store_id = 885"), use that column as sort key
+
+5 for frequently joined tables(dimension tables), use the join key as sort key
+
+
+//------DETERMINING DISTKEY
+1 main goals are to collocate joined data and distribute query load evenly
+
+2 KEY, ALL, EVEN distribution types explained in "Data Distribution Concepts" 	
+
+3 can only have ONE distkey per table
+
+4 can not change it after table creation
+
+//------DETERMINING DISTKEY: EXPLAIN
+1 EXPLAIN command returns query plan detail
+
+2 Look for DS_BCAST, DS_DIST labels(there are the most exprensive)
+    DS_BCAST_INNER: Entire inner join table was broadcast(network copied) to every slice
+    DS_DIST_BOTH: Entire inner-and_outer join tables were copied to every slice
+    Ending in _NONE is good(DS_DIST[_ALL]_NONE)   // don't need to be copied
+
+----------------------------------TUNING QUERY PERFORMANCE   -- part2
+
+
+//------DETERMINING DISTKEY: STAR SCHEMA
+1 KEY distkey collocates only two tables on common column
+   1) use fact table as one
+   2) "longest" join table as second
+   3) choose join key for both as the distkey
+
+collocate
+verb [ I ] UK ​ /ˈkɒl.ə.keɪt/ US ​ /ˈkɑː.lə.keɪt/ specialized​
+(of words and phrases) to often be used together in a way that sounds correct to people who have spoken the language all their lives, but might not be expected from the meaning
+
+2 careful using ALL as distkey
+    1) can greatly improve query performance
+    2) and greatly reduce overall storage capacity
+         "table size" * "# of lsices"
+
+3 EVEN should only be used when you're certain there's no opportunity for KEY or ALL
+
+//------COMPRESSION ENCODINGS
+1 Automatically chosen by COPY command
+2 Review compression with:
+    STV_BLOCKLIST: table showing # of 1MB blocks used for that data
+    analyze compression: Command showing current compression encodings
+3 use results from the two above, create new columns on same data(changing compression encoding) and run comparsion queries
+
+//------TROUBLESHOOTING BASIS
+1 connection fail: client network, security(SSL) error
+2 connection refused: permissions(IAM, Redshift acct)
+3 client-side out of memory: result set overflowed client resources
+
+//------TROUBLESHOOTING  SLOW QUEIRES
+1 tables not optimized
+    sortkey(s), distkey, compression encoding
+    use EXPLAIN. Baseline-> experiment->baseLine->experiment...
+2 resource contention
+    use CloudWatch
+    use WLM(work load manager) -- short -vs - long running queues, rules,caps
+    bigger cluster?
+    AWS? in SDK, capture the "requestID"
+3 queries not optimized
+    use Explain. baseline-> experiment->baseline->experiment...
+4 data layout not optimized(?)
+    hotspots and data skewing?
+    sortkey(s) determine the zone maps
+    different tables for different queries
+5 spilling to disk is one of the largest issues
+    view disk spill through "performance" window in console
+
+    select query, step, rows, workmem, label, is_diskbased 
+    from svl_query_summary
+    where query = [your-query-id]
+    order by workmem desc;
+
+//------tuning query performance
+1 table design
+    sortkey and distkey selection
+    compression encodings
+2 leader node statistics
+3 troubleshooting
+
+
+----------------------------------LAB: connecting tableau
+1 download and install tableau desktop
+2 connect tableau to existing redshift cluster
+3 choose tables to join
+
+tableau server
+
+//------download tableau
+www.tableau.com/products/desktop/download
+
+//------
+
+
+----------------------------------LAB: TABLEAU USAGE
+1 Use visualizations to discover Redshift data
+2 alter redshift data to show an issue with an area
+3 update visualizations in Tableau to reflect
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+//------
+
+//------
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+----------------------------------
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+//------
+
+//------
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+----------------------------------
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+----------------------------------
+
+//------
+
+//------
+
+//------
+
+//------
+
+
+// -------------------------------
+//------
+
+//------
+
+//------
+
+//------
+
+
+// -------------------------------
+//------
+
+//------
+
+//------
+
+//------
+
+
+// -------------------------------
+//------
+
+//------
+
+//------
+
+//------
+
+
+// -------------------------------
+//------
+
+//------
+
+//------
+
+//------
+
+
+// -------------------------------
+//------
+
+//------
+
+//------
+
+//------
+
+
+start time: 16:45
+

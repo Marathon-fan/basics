@@ -1,0 +1,2956 @@
+
+
+//--------------------------------------------------------------------------------------candidate Overview
+Eligible candidates for this exam have
+
+1 a current AWA Associate level certification
+2 minimum 5 years hands-on experience in a data analytics field
+3 background in defining and architecting AWS big data services with the ability to explain how they fit in the data lifecycle of collection, ingestion, storage, processing, and visualization
+
+//-------
+Exam Overview
+1 Format: multiple choice, multiple answer
+2 length: 3 hours
+3 language: English
+4 Registration Fee: #300 USD
+5 Recommended for study:
+  1) Big Data Technology Fundamentals,
+  2) Big Data instructor led traning class
+  3) Big Data AWS whitepapers and documentation
+
+Domain
+1 collection                          17%
+2 storage                             17%
+3 processing                          17%
+4 analysis                            17%
+5 visualization                       12%
+6 data security                       20%
+7 total                               20%
+
+The Exam
+1 one of the toughest exams in IT
+2 Tests of 4 things:
+  1) knowledge of AWS
+  2) comprehension skills
+  3) how you cope under pressure
+  4) patience/time management
+
+  prerequisties
+  1 there will be costs associated with the labs(not all services have a free tier)
+  2 clean up resources after you have completed each lab
+
+  What you will need
+  1 aws account
+  2 a comptuer with a SSH client
+  3 IAM user with the administrator access policy
+  4 enable an MFA for your IAM user
+  5 create a role with the administrator access policy, 
+  6 an Amazon Linux instance withe the "bigdatacertadmin" role attached to the instance(us-east-1 or us-west-2). t2micro to m4.large(recommended). the lowest cost 
+  7 size the root volume for 100 GB
+    40G dataset
+
+    recommendation:
+    m4.large(100 GB root volume)
+
+  8 SQL client
+     1 Aginity workbench for Amazon redshift(windows only) // RDP to this client(windows)
+     2 SQL workbench/J (Windows or MAC)
+  9 VPC(public subnet)
+
+//-------Generating a Dataset
+1 download the TPC-H tools in order to generate a dataset
+  www.tpc.org/tpch
+
+2 scp the zip file into the linux instance in EC2
+$> scp -i xx.pem tpc-tool.zip ec2-user@34.203.213.234:~
+
+3 then connect to the linux instance
+$> ssh -i xx.pem ec2-user@34.203.213.234
+
+4 unzip the tpc-h file
+$> unzip tpc-tool.zip
+
+5
+compile the tools
+$> sudo yum group install Development Tools    // install tools
+$> pwd
+$> mkdir emrdata
+$> cd 2.17.3
+$> cd dbgen
+$> cp makefile.suite makefile
+$> vi makefile
+$> esc-> 103 -> Shift-g         //goto command. To do this, press Esc , type the line number, and then press Shift-g
+//To go to a specific line like line 44    press Esc then   ":44"
+CC = gcc
+DATABASE = POSTGRES
+MACHINE = LINUX
+WORKLOAD = TPCH
+
+then save the file
+
+$> make   // ignore the rror
+$> export DSS_PATH=$HOME/emrdata
+$> ./dbgen -v -T o -s 10 
+// v - verbose
+// -T specifgy table   o stands for 2 tables
+// -s size            10 GigaBytes
+
+
+then we see the data
+$> cd $HOME/emrdata
+$> ls -ltr
+
+// create a s3 bucket called bigdatalabpractice and copy the data to that s3 bucket
+$> aws s3api create-bucket --bucket bigdatalabpractice --region us-east-1
+$> aws s3 cp $HOME/emrdata s3://bigdatalabpractice/emrdata --recursive 
+
+
+// create folder for redshift
+$> cd ..
+$> pwd
+$> mkdir redshiftdata
+$> export DSS_PATH=$HOME/redshiftdata
+$> cd $HOME/2.17.3/dbgen
+$> ./dbgen -v -T o -s 40     // a larger dataset   40G
+$> ps -ef|grep dbgen
+// The -e option generates a list of information about every process currently running. 
+// The -f option generates a listing that contains fewer items of information for each process than the -l option.
+
+// ps -aux | less
+ps -aux | less
+The -a option tells ps to list the processes of all users on the system rather than just those of the current user, with the exception of group leaders and processes not associated with a terminal. A group leader is the first member of a group of related processes.
+The -u option tells ps to provide detailed information about each process. The -x option adds to the list processes that have no controlling terminal, such as daemons, which are programs that are launched during booting (i.e., computer startup) and run unobtrusively in the background until they are activated by a particular event or condition.
+
+As the list of processes can be quite long and occupy more than a single screen, the output of ps -aux can be piped (i.e., transferred) to the less command, which lets it be viewed one screenful at a time. The output can be advanced one screen forward by pressing the SPACE bar and one screen backward by pressing the b key.
+
+$> cd $HOME/redshiftdata
+$> ls -l
+
+// split files so that redshift can load data faster
+// 1 find how many lines a table has
+$> cd $HOME/redshiftdata
+$> wc -l orders.tbl
+// then we see the line count of the table. 60000000 
+$> split -d -l 15000000 -a 4 orders.tbl orders.tbl.   // orders.tbl. means that new files will have some suffix
+
+//split 
+// -d, --numeric-suffixes	Use numeric suffixes instead of alphabetic.
+//-l NUMBER, --lines=NUMBER	Put NUMBER lines per output file.
+//-a N, --suffix-length=N	Use suffixes of length N (default 2)
+
+$> wc -l lineitem.tbl
+// over 200 million records   240012290 
+$> split -d -l 60000000 -a 4 lineitem.tbl lineitem.tbl. 
+
+// then we remove the original files
+$> rm orders.tbl
+$> rm lineitem.tbl
+
+// cope the files to S3
+$> aws s3 cp $HOME/redshiftdata s3://bigdatalabpractice/redshiftdata --recursive  
+
+//-------short summary
+1 download the TPC-H tools in order to generate a dataset
+2 http://www.tpc.org/tpch/
+3 copy data to S3 for EMR lab
+4 split data and copy to S3 for Redshift lab
+5 stop your EC2 instance once copying to S3 has completed
+
+
+//-------
+//scp vs wget
+// wget faster but only support http
+I would prefer wget since it's much faster than scp. I've always experienced wget 5 times faster than scp.
+Say, I have a gigabyte network. If I try to copy a large file through scp, the max rate may be 10MB/s while it can be as fast as 50MB/s with wget.
+The problem is wget can only be used through http. But it's easy if you try with SimpleHTTPServer from python.
+
+
+//wget vs curl
+// wget can download recursively
+// curl supports FTP, FTPS, HTTP, HTTPS, SCP, SFTP, TFTP, TELNET, DICT, LDAP, LDAPS, FILE, POP3, IMAP, SMTP, RTMP and RTSP. wget supports HTTP, HTTPS and FTP.
+The main differences are:
+wget's major strong side compared to curl is its ability to download recursively.
+wget is command line only. There's no lib or anything, but curl features and is powered by libcurl.
+curl supports FTP, FTPS, HTTP, HTTPS, SCP, SFTP, TFTP, TELNET, DICT, LDAP, LDAPS, FILE, POP3, IMAP, SMTP, RTMP and RTSP. wget supports HTTP, HTTPS and FTP.
+curl builds and runs on more platforms than wget.
+wget is part of the GNU project and all copyrights are assigned to FSF. The curl project is entirely stand-alone and independent with no organization parenting at all
+curl offers upload and sending capabilities. wget only offers plain HTTP POST support.
+
+//-------
+
+Do you get charged for a 'stopped' instance on EC2? [closed]
+
+
+up vote
+182
+down vote
+accepted
+No.
+
+You get charged for:
+
+Online time
+Storage space (assumably you store the image on S3 [EBS])
+Elastic IP addresses
+Bandwidth
+So... if you stop the EC2 instance you will only have to pay for the storage of the image on S3 (assuming you store an image ofcourse) and any IP addresses you've reserved.
+//-------
+
+
+
+//---------------------------------------------------------------------------------------Kinesis Firehose
+
+Amazon Kinesis Data Streams enables you to build custom applications that process or analyze streaming data for specialized needs. Kinesis Data Streams can continuously capture and store terabytes of data per hour from hundreds of thousands of sources such as website clickstreams, financial transactions, social media feeds, IT logs, and location-tracking events. With the Kinesis Client Library (KCL), you can build Kinesis Applications and use streaming data to power real-time dashboards, generate alerts, implement dynamic pricing and advertising, and more. You can also emit data from Kinesis Data Streams to other AWS services such as Amazon Simple Storage Service (Amazon S3), Amazon Redshift, Amazon EMR, and AWS Lambda.
+
+introduction
+1 collect and load streaming data in near real-time
+2 load data into S3, Redshift and Elasticsearch
+3 use existing BI tools and dashboards
+4 highly available and durable
+5 fully managed
+  1) scalability, sharding and monitoring with zero administration
+  2) minimize storage
+  3) secure
+6 management console or API
+
+
+//-------Loading data into Kinesis Firehose
+1 methods to load data
+  1) Kinesis Agent
+  2) AWS SDK
+
+Amazon Kinesis Agent
+1 web servers, log servers, database servers
+2 download and install the agent
+3 monitor files and sends to a delivery stream
+4 cloudWatch Metrics
+5 Pre-process data
+  1) multi-line records to single line
+  2) convert from delimiter to JSON format
+  3) convert a record from a log format to a JSON format
+
+AWS SDK
+1 Java, .NET, Node.js. Python, or Ruby
+2 PutRecord(single data record)
+3 PutRecordBatch(multiple data records)
+
+//-------Lab
+
+aws service console -> Analytics -> Kinesis -> Data Firehose -> Create delivery stream ->
+
+destination: Amazon S3
+Delivery stream name: bigdatalabpracticeDemo
+S3:bucket: bigdatalabpractice
+
+disable data transformation(Lambda)
+
+S3 buffer:5
+buffer interval:300s
+
+s3 compression and encryption:
+data compression: uncompressed
+data encryption: no encryption
+
+error logging:
+enable
+
+IAM role:firehose_delivery_role
+
+
+then launch this delivery stream
+
+then we can send test data into this delivery stream and after a few seconds, we can see the data in S3 bucket
+
+
+//-------transforming data using Lambda
+1 invode a Lambda function to transform
+2 data transformation flow
+  1) buffers incoming data up to 3 MB or the buffering size specified in the delivery steam
+  2) firehose invokes lambda function
+  3) transformed data is sent from lambda to firehose for buffering
+  4) transformed data is delivered to destination
+ 
+3 Parameters for transformation
+  1) recordId - transformed record must have the same recordId prior to transformation
+  2) result - transformed record status: "Ok", "Dropped"(dropped intentionally by the transformed logic we created) and "ProcessingFailed"
+  3) data - transformed data payload
+
+4 transformation lambda functions(lambda blueprints)
+  1) Kinesis firehose processing    // customered function
+  2) apache log to JSON
+  3) Apache Log to CSV
+  4) Syslog to JSON
+  5) syslog to CSV
+
+5 failure handling
+  1) 3 retries
+  2) invocation errors can be logged to CloudWatch Logs
+  3) unsuccessfully process records sent to S3 bucket in the "processing_failed" folder
+
+6 Data delivery
+  1) frequency
+     (1) S3 
+           depends on buffer size(1MB - 128 MB) and buffer interval (60-900 seconds)
+           firehose can reaise the buffer size dynamically
+     (2) redshift 
+           how fast can the redshift cluster finish the COPY command
+           firehose issues new COPY command automatically
+     (3) Elasticsearch
+           depends on buffer size(1MB - 128 MB) and buffer interval (60-900 seconds)
+           firehose can reaise the buffer size dynamically
+  2) failures
+     (1) S3 
+           firehose retries delivery for up to 24 hours
+
+     (2) redshift 
+           retry duration is 0-7200 seconds from S3
+           skips S3 objects
+           manifest them in manual backfill
+     (3) Elasticsearch
+           retry duration is 0-7200 seconds
+           skips index request
+           skipped documents delivered to S3 bucket
+            manual backfill
+
+//-------conclusion for the exam
+1 firehose can load streaming data into S3, redshift and elasticsearch
+2 how is lambda used with firehose
+3 key concepts
+
+
+
+//---------------------------------------------------------------------------------------Amazon SQS Overview
+
+1 simple queue service
+2 reliable
+3 scalable
+4 hosted queues
+5 sending
+6 storing
+7 retrieving
+8 buffer
+9 256kb message
+10 any application can store in the queue
+11 any application can retrieve from the queue
+12 > 256KB can be managed using SQS Extended client library, which uses S3   !!!!!!!!!!
+13 ensures delivery of a message at least once
+14 supports multiple readers and writers
+15 single queue can be shared by many component
+16 FIFO queues are supported(since Nov2016)
+17 a queue can be created in any region
+18 messages can be retained in queues for up to 14 days
+19 messages can be sent and read simultaneously
+20 Long polling recuces extraneous polling
+
+
+//-------Amazon SQS vs Kinesis Streams  for the exam
+
+1 SQS vs Kinesis Streams
+
+2 SQS Use cases
+  1) order processing
+  2) image processing
+
+3 Kinesis Streams use cases
+  1) fast log and data feed intake and processing
+  2) read-time metrics and reporting
+  3) real-time data analytics
+  4) complex stream processing
+
+
+
+
+
+//---------------------------------------------------------------------------------------AWS IoT
+Introduction
+1 managed cloud platform
+2 devices interact securely with applications and other devices
+3 billions of devices and trillions of messages
+4 messages can be routed to other AWS services and other devices
+
+
+//-------IoT and Big Data (in general go together)
+1 IoT devices produce data
+2 analyze streaming data in real-time
+3 process and store the data
+4 don't want to worry about capacity, scaling, infrastructure management
+
+
+//-------IoT authentication
+Authentication
+1 each connected device requires a X.509, upload your own CSR or CA
+2 AWS IoT uses IAM polices for users, groups and roles
+3 amazon cognito identities for mobile applications
+
+
+//-------authentication - Cognito Identity
+1 allows your to use your own identity provider
+2 login with Amazon, facebook, google, twitter
+3 OpenID providers, SAML Identity provider
+4 Cognito Identity User Pools(scale to millions of users)
+
+//-------Authorization(AWS IoT )
+1 AWS IoT policies and IAM policies to control operations an identtity can perform
+2 AWS IoT operations
+  1) control plane API for administrative tasks
+  2) Data plane API for sending and receiving data from AWS IoT
+
+//-------AWS IoT --- Device Gateway(Message Broker)
+1 maintains sessioons and subscriptions for all connected devices
+2 allows secure one-to-one and oe-to-many communications
+3 protocols
+  1) MQTT(Message Queue Telemetry Transport)
+  2) websockets
+  3) HTTP
+4 scale automatically (to support over 1 million devices)
+
+
+//-------AWS IoT --- Device Registry
+1 what is a thing?
+   Physical device or logical entity(application)
+2 central location for storing attributes related to each thing
+
+
+//-------AWS IoT --- Device Sahdow(Thing Shadow)
+1 JSON document to store and retrieve the current state for a thing
+2 Device shadow maintained for each thing connected to AWS IoT
+3 Acts as a message channel to send commands to a thing
+
+
+
+//-------AWS IoT --- Rules Engine
+1 provide a thing the ability to interact with the AWS IoT service and other services
+2 rules enable you to transform messages and route them to various AWS services
+3 messages are transformed using a SQL based syntax
+4 based on the rule, a rule action is triggered and that rule action kicks off the delivery of message to other AWS services
+
+
+//-------IoT -- rules -- lab
+Select * from 
+
+
+//-------
+
+
+//-------for the exam
+
+you can create rule for dynamoDB, lambda, Kenisis, Kenisis firehose, and machine learning
+
+1 authentication and authorization
+2 pay special attention to how Cognito works with AWS IoT
+3 device gateway, device registry and device shadow
+4 know what the rules engine does
+5 know what a rule action does  ?????
+6 rule actions for lambda, dynamoDB, kinesis streams, kinesis firehose and machine learning
+
+
+//---------------------------------------------------------------------------------------AWS Data PineLine
+introdcution
+1 web service that helps you process and move data between AWS compute and storage service and on-premise data sources
+2 create an ETL workflow to autmate processing and movement of data at acheduled intervals, then termiante the resources
+
+
+//-------Data pipeline - Key concepts
+
+1 pipeline is a name of the container that contains
+  1) datanodes
+  2) activities
+  3) preconditions
+  4) schedules
+  5) these components help you to move your data from one location to another
+  6) EC2 instance or an EMR cluster which are provisioned and terminated automatically
+
+//------- Pipeline - On Premise
+1 install a Task runner package on your on-premise hosts
+2 the package continulously polls the Data Pipeline for work to perform
+3 when it's time to run a particular activity on your on-premise resources, for example, executing a DB stored procedure or a database dump, AWS Data pipeline will issue the approprivate command to the Task Runner
+
+
+//-------Data Nodes
+End destination for your data
+
+like SqlDataNode, S3DataNode, RedshiftDAtaNode...DynamoDbDataNode
+
+//-------Activity
+an action that data pipeline initiates on your behalf as part of a pipeline
+
+copyActivity
+emrActivity
+HiveActivity
+PigActivity
+ShellcommandActivity
+
+//-------Precondition
+1 Readiness check that can be optionally associated with a data source or activity
+2 if a data source has precondition check, then that check must complete successfully before any activities consuming the data source are launched
+3 if an activity has a precondition, then the precondition check must complete successfully before the activity is run
+4 you can specify custom preconditions
+
+Precondition example:
+1 DynamoDBDataExists -- does data exists?
+2 DynamoDBTableExists -- does table exists?
+3 S3KeyExists -- does s3 path exists?
+4 S3PrefixExists -- does a file exist within that s3 Path?
+5 ShellcommandPrecondition -- custom preconditions
+
+//-------Schedules
+define when your pipeline activities run and the frequency with which the service expects your data to be available
+
+
+
+//-------for the exam
+1 data pipeline is a web service that helps you reliably process and move data between different AWS compute and storage service
+2 can be integrated with on-premise environments
+3 data pipeline will provision and termiante resources as, and when, required
+4 pipeline components include datanode, activity, precondition and schedule
+5 a lot of its functionality has been replaced by Lambda
+
+
+//-------quiz
+
+QUESTION 1 OF 11
+True or False: Data Pipeline does not integrate with on-premise servers.
+false
+
+AWS provides you with a Task Runner package that you install on your on-premise hosts. Once installed, the package polls Data Pipeline for work to perform. If it detects that an activity needs to run on your on-premise host (based on the schedule in Data Pipeline), the Task Runner will issue the appropriate command to run the activity, which can be running a stored procedure or a database dump or another database activity. Further information: 
+
+QUESTION 2 OF 11
+Kinesis Firehose buffers incoming data before delivering the data to your S3 bucket. What are the buffer size ranges?
+1MB - 128 MB
+Good Work!
+Each delivery stream stores data records for up to 24 hours in case the delivery destination is unavailable. The PutRecordBatch() operation can take up to 500 records per call or 4 MB per call, whichever is smaller. Buffer size ranges from 1 MB to 128 MB.
+
+QUESTION 3 OF 11
+Your team has successfully migrated the corporate data warehouse to Redshift. So far, all the data coming into the ETL pipeline for the data warehouse has been from other corporate systems also running on AWS. However, after signing some new business deals with a 3rd party, they will be securely sending files directly to S3. The data in these files needs to be ingested into S3. Members of your team are debating the most efficient and best automated way to introduce this change into the ETL pipeline. Which of the following options would you suggest? (Choose 2)
+
+1 use lambda(AWS Redshift Database loader)
+2 use Data pipeline
+
+!! the questions mentioned about Redshift!!!!!!!!
+
+Sorry!
+You can use Data Pipeline, with a RedshiftCopyActivity, S3 and Redshift data nodes and a schedule or Lambda (using the AWS Redshift Database Loader. Further information: https://aws.amazon.com/blogs/big-data/a-zero-administration-amazon-redshift-database-loader/
+
+
+
+QUESTION 4 OF 11
+Data delivery from your Kinesis Firehose delivery stream to the destination is falling behind. When this happens, you need to manually change the buffer size to catch up and ensure that the data is delivered to the destination.
+false
+
+Amazon Kinesis Firehose raises the buffer size automatically to catch up and make sure that all data is delivered to the destination. 
+
+Sorry!
+In circumstances where data delivery to the destination is falling behind data ingestion into the delivery stream, Amazon Kinesis Firehose raises the buffer size automatically to catch up and make sure that all data is delivered to the destination. Further information: http://docs.aws.amazon.com/datapipeline/latest/DeveloperGuide/dp-how-remote-taskrunner-client.html
+
+QUESTION 5 OF 11
+Regarding SQS, which of the following are true? (Choose 3)
+1 2 5
+
+1Messages can be sent and read simultaneously.
+
+2Messages can be retained in queues for up to 14 days.
+
+3A queue can only be created in limited regions, and you should check the SQS website to see which are supported.
+
+4Messages can be retained in queues for up to 7 days.
+
+5A queue can be created in any region.
+
+
+QUESTION 6 OF 11
+
+Which of the following AWS IoT components transforms messages and routes them to different AWS services?
+3
+
+1DEvice Gateway
+2Device Shadow
+3Rules Engine
+4Rule Actions
+
+
+Good Work!
+The Rules Engine transforms messages using a SQL-based syntax. The Device Gateway (Message Broker) uses topics to route messages from publishing clients to subscribing clients. The a message is published to the topic, the SQL statement is evaluated and rule action is triggered, sending the message to another AWS service.
+
+
+QUESTION 7 OF 11
+
+Which service does Kinesis Firehose not load streaming data into?
+2
+
+1Redshift
+2DynamoDB
+3S3
+4Elasticsearch
+
+Sorry!
+Kinesis Firehose can capture, transform, and load streaming data into Amazon Kinesis Analytics, Amazon S3, Amazon Redshift, and Amazon Elasticsearch Service.
+
+
+QUESTION 8 OF 11
+
+For an unknown reason, data delivery from Kinesis Firehose to your Redshift cluster has failed. Kinesis Firehose retries the data delivery every 5 minutes for a maximum period for of 60 minutes; however, none of the retries deliver the data to Redshift. Kinesis Firehose skips the files and move onto the next batch of files in S3. How can you ensure that the undelivered data is eventually loaded into Redshift?
+3
+
+
+1Check the STL_LOAD_ERRORS table in Redshift, find the files that failed to load and manually, and load the data in those files using the COPY command.
+
+2Check CloudWatch Logs to determine which files in S3 were skipped by Kinesis Firehose, fix the files, and manually load them into Redshift.
+
+3Skipped files are delivered to your S3 bucket as a manifest file in an errors folder. Run the COPY command manually to load the skipped files after you have determined why they failed to load.
+
+4You create a Lambda function to automatically load these files into Redshift by reading the manifest after the retries have been completed and the COPY command has been run.
+
+
+Good Work!
+Amazon Kinesis Firehose retries data delivery every 5 minutes for up to a maximum period of 60 minutes. After 60 minutes, Amazon Kinesis Firehose skips the current batch of S3 objects that are ready for COPY and moves on to the next batch. The information about the skipped objects is delivered to your S3 bucket as a manifest file in the errors folder, which you can use for manual backfill. For information about how to COPY data manually with manifest files, see Using a Manifest to Specify Data Files. Further information: https://docs.aws.amazon.com/redshift/latest/dg/loading-data-files-using-ma
+
+
+
+QUESTION 9 OF 11
+
+For which of the following AWS services can you not create a rule action in AWS IoT? (Choose 2)
+24
+
+1DynamoDB
+
+2Redshift
+
+3Kinesis Firehose
+
+4Aurora
+
+5CloudWatch
+
+6Kinesis Streams
+
+Sorry!
+AWS IoT rule actions specify what to do when a rule is triggered. You can create actions for the following services: CloudWatch, DynamoDB, Elasticsearch, Kinesis Firehose, Kinesis Streams, Kinesis Firehose, Lambda, S3, SNS, and SQS.
+
+
+QUESTION 10 OF 11
+
+Your company is launching an IoT device that will send data to AWS. All the data generated by the millions of devices your company is going to sell will be stored in DynamoDB for use by the Engineering team. Each customer's data, however, will only be stored in DynamoDB for 30 days. A mobile application will be used to control the IoT device, and easy user sign-up and sign-in to the mobile application are requirements. The engineering team is designing the application to scale to millions of users. Their preference is to not have to worry about building, securing, and scaling authentication for the mobile application. They also want to use their own identity provider. Which option would be the best choice for their mobile application?
+4
+
+1Since everyone uses Facebook, Amazon, and Google, keep it simple and use all three.
+
+2Use LDAP.
+
+3Use a SAML identity provider.
+
+4Use an Amazon Cognito identity pool.
+
+Good Work!
+You can use user pools to add user registration and sign-in features to your application. Instead of using external identity providers such as Facebook, Google, or Amazon, you can use user pools to let users register with (or sign in to) an app using an email address, phone number, or a username. You can also create custom registration fields and store that metadata in your user directory. You can verify email addresses and phone numbers, recover passwords, and enable multi-factor authentication (MFA) with just a few lines of code.
+
+
+If Kinesis Firehose experiences data delivery issues to S3, it will retry delivery to S3 for a period of ________.
+24 hours
+
+1 3 hours
+
+2 24 hours
+
+3 7 hours
+
+4 7 days
+
+Sorry!
+If data delivery to your Amazon S3 bucket fails, Amazon Kinesis Firehose retries to deliver data every 5 seconds for up to a maximum period of 24 hours. If the issue continues beyond the 24-hour maximum retention period, it discards the data.
+
+
+//---------------------------------------------------------------------------------------Kinesis Streams--- Introduction
+
+Amazon Kinesis Streams--
+1) Kinesis Streams      ----
+2) Kinesis Analytics    ----
+3) Kinesis Firehose     ---- 
+
+//-------Kinesis Streams - introduction
+Collect and process large streams of data in real time
+
+Create data-processing applications
+1 read data from stream
+2 process records
+  1) send to a dashboard
+  2) generate an alert
+  3) dynamically change price
+  4) dynamically change advertising strategy
+
+//-------Kinesis Streams - scenarios
+scenarios
+1 fast log and data feed intake and processing
+2 read-time metrics and reporting
+3 read-time data analytics
+4 complex stream processing
+
+Benefits
+1 read-time aggregation of data
+2 loading the aggregate data into a data warehouse/mapreduce cluster
+3 durability and elasticity
+4 parallel application reader
+
+//-------Loading data into Kinesis Streams
+1 methods to laod/get data
+  1) Kinesis Producer Library(KPL)
+  2) Kinesis Client Library(KCL) -- get data from Kinesis Stream(consumer)
+  3) Kinesis Agent(collect and send data to Kinesis streams)
+  4) Kinesis REST API(put and get records from Kinesis Stream)
+
+
+
+//-------Streams High-level Architecture
+
+
+//---------------------------------------------------------------------------------------Kinesis Streams - core concepts 
+
+//-------- Shards
+1 what is a Shard
+uniquely identified group of data records in a stream
+2 single Shard Capacity
+1) 1 MB/sec data input
+2) 2 MB/sec data output
+3) 5 transactions/sec for reads
+4) 1000 records/sec for writes
+
+3 you can create multiple shards in a stream
+  1) Stream with 2 shards
+    (1) 2 MB/sec data input
+    (2) 4 MB/sec data output
+    (3) 10 transactions/sec for reads
+    (4) 2000 records/sec for writes
+  2) Resharding
+    (1) shard split-- divide a single shard into 2 shards
+    (2) shard merge
+
+
+//------- Records
+1 what is a record?
+  Unit of data stored in a stream
+
+2 a record consists of 
+1) partition Key
+2) Sequence Number
+3) Data Blob
+
+
+//-------Partition Key
+1 group the data by shard
+2 tells you which shard the data belongs to
+3 partition key is specified by the applications putting the data into a stream
+
+//-------Sequence Number
+1 unique identifiers for records inserted into a shard
+2 think of it as a unique key that identifies a data blob
+3 assigned when a producer calls PutRecord or PutRecords operations to add data to a stream
+4 You can't use sequence numbers to logically separate data in terms of what shards they have come from, you can only
+do this using partition keys
+
+
+//-------Data Blob
+1 Data blob is the data your data producer adds to a stream
+2 The maximum size of a data blob(the data payload after Base64-decoding) is 1 MB
+
+
+//-------Retention Period
+1 24 hours by default
+2 increase this to 7 days if required
+3 change retention period through CLI
+
+
+//-------Data Producers
+1 Amazon Kinesis Streams API
+  1) AWS SDK for Java
+  2) PutRecord(Single data record)
+  3) PutRecords(Multiple data records)
+
+2 Amazon Kinesis Prodcuer Library(KPL)
+  1) configurable library to create producer applications that allow developers to archieve high write ghoughput to a Kinesis Stream
+  2) write to one or more Kinesis Streams with an auto-retry configurable mechanism
+  3) collects records to write multiple records to multiple shards per request
+  4) aggregate user records
+  5) Kinesis Client Library integration(de-aggregate records)
+  6) Monitoring(CloudWatch)
+  7) do not use KPL if..
+    (1) your producer application/use case cannot incur an additional processing delay
+    (2) RecordMaxBufferedTime
+    (3) Maximum amount of time a record spends being buffered
+    (4) larger values result in better performance, but can delay records
+    (5) setting RecordmaxBufferTime too low can negatively impact throughput
+
+  8) Aggregation(batching)
+    (1) user records and Streams records
+    (2) Aggregation allows you to combine multiple user records into a single Streams record, helping improve per shard throughput
+    (3) single shard capacity is 1MB/sec(write rate of 1000 records per second)
+    (4) example: 1000 records(500 bytes each) = 0.5MB/Sec
+
+  8) Collection(batching) 
+    (1) multiple streams records are batched and sent in a single HTTP request with a call to the PutRecords API operation
+    (2) Helps increase throughput due to reduced overhead of not making separate HTTP requests
+
+  9) Collection vs Aggregation
+    (1) Collection is working with groups of Streams records and batching them to reduce HTTP requests
+    (2) Aggregation allows you to combine multiple user records into a single Streams record in order to efficiently use shards
+
+  10) PutRecords
+    (1) PutRecords operation sends multiple records to your stream per HTTP request(recommended approach for applications that require high throughput)
+    (2) Single record failure does not stop the processing of subsequent records
+    (3) Despite the failure of a single record, if other records in the PutRecords API are successful, HTTP status code of 200 is still returned
+    (4) For partial failures, the PutRecordsResult method in the KPL can be used to detect individual record failures and retry the PUT based on the HTTP status code ?????
+    (5) AWS Big Data Blog
+       implementing efficient and reliable Producers with the Amazon Kinesis Producer Library
+   
+2 Amazon Kinesis Agent
+   1) Web Servers, Log Servers, Database Servers
+   2) Download and install the agent
+   3) monitor multiple directories and write to multiple streams
+   4) pre-process data
+    (1) multiple-line record to single line
+    (2) convert from delimiter to JSON format
+    (3) convert a record from a log format to a JSON format
+
+
+delimiter
+[dih-lim-i-ter] 
+Spell  Syllables
+Word Origin
+noun, Computers.
+1.
+a blank space, comma, or other character or symbol that indicates the beginning or end of a character string, word, or data item.
+
+
+//-------Data consumers
+Kinesis Streams applications using Kinesis Client Library(KCL)
+  1 KCL consume and process data
+  2 KCL handles complex tasks
+  3 Java, Node.js, .NET, Python and Ruby
+  4 Checkpointing
+     1) keeps track of records that have already been processed in a shard
+     2) if a worker fails, KCL will restart the processing of the shard at the last known processed record
+  5 run your consumer application by running it on EC2 instance under an Auto Scaling group in order to replace failed instances or handle addtional load
+  6 KCL automatically load balances record processing across many instances
+  7 supports de-aggregation of records that were aggregated with the KPL
+  8 uses unique DynamoDB table for each application to track application state
+  9 KCL uses the name of the Streams application to create DynamoDB table, so use unique application names in KCL
+  10 Each row in the DynamoDB table represents a shard
+  11 Hash key for the DynamoDB table is the shard ID
+
+//-------DynamoDB table throughput
+1 10 read capacity units and 10 write capacity units
+2 provisioned throughput expections
+   1) your application does frequent checkpointing
+   2) your stream has too many shards
+   3) consider adding more provisioned throughput to the DynamoDB table
+
+//-------For the exam
+1 any kink of scenario where you are streaming large amounts of data that needs to be processed quickly and you have a requirement to build a custom application to process and analyze streaming data
+
+2 shard
+3 records and its components
+4 retention period
+5 data producers(KPL, Kinesis Agent, Kinesis Streams API)
+6 Data consumers(KCL)
+7 additional throughput for DynamoDB application state table if you get provisioned throughput exception errors
+
+
+
+//---------------------------------------------------------------------------------------Kinesis Streams Emitting Data to AWS Services
+
+//-------use cases
+S3 -- archiving data
+
+DynamoDB -- Metrics
+
+Elasticsearch -- search and index  !!
+
+Readshift -- micro batch loading
+
+EMR -- process and analyze data
+
+Lambda -- automate emitting data
+
+
+//-------Kinesis connector library
+1 java based
+2 used with the Kinesis Client Library
+3 connectors for 
+   1) dynamoDB
+   2) Redshift
+   3) S3
+   4) elastic search
+
+download the connectors from github:
+github.com/awslabs/amazon-kinesis-connectors
+
+//-------Kinesis Connector Library
+1 Connector library Pipeline
+
+2 Connector Library pipeline- interfaces and classes
+  1) S3Emitter class 
+    (1) writes buffer contents into a single file in S3
+    (2) requires the configuration of an S3 bucket and endpoint
+
+// lab -- create Kinesis stream from a text file, write the stream into a S3 file and dynamo DB
+then run the sample from: 
+github.com/awslabs/amazon-kinesis-connectors
+
+$> ssh -i myUSEast1KP.pem ec2-user@34.236.147.140
+
+$> git clone https://github.com/awslabs/amazon-kinesis-connectors.git
+
+$> cd amazon-kinesis-connectors/
+
+$> cd src/main/resources
+
+$> vi S3Sample.properties  #  change the s3 bucket name
+
+# install mvn to amazon ec2
+$> sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+$> sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+$> sudo yum install -y apache-maven
+$> mvn --version
+
+$> cd ../../samples
+$> mvn package
+
+$> cd target
+$> cd cd appassembler/bin
+
+$> ./s3-sample 
+
+$> 
+$> 
+$> 
+
+a dynamoDB Table is also created when we use Kinesis Client lib to build a consumser, and we see it from DynamoDB console
+
+//-------
+
+
+//-------For the exam:
+
+1 Data can be emittted to S3, DynamoDB, Elasticsearch and Redshift from Kinesis Streams using the Kinesis Connector Library.
+2 Lambda functions can automatically read records from a Kinesis Stream, process them and send the records to S3, DynamoDB or Redshift
+
+
+
+
+//---------------------------------------------------------------------------------------Amazon Glacier
+AWS Big Data portfoilio
+1 keep all your data at much lower cost
+2 compliance requirement to keep your data
+
+//-------Compliance - Vault Lock
+1 deploy and enforce controls for a vault with a vault lock policy
+2 policies
+  1) locked from editing
+  2) policies cannot be changed after locking
+  3) enforce compliance controls
+  4) created using IAM
+
+
+
+
+compliance
+[kuh m-plahy-uh ns] 
+Spell  Syllables
+Examples Word Origin
+See more synonyms on Thesaurus.com
+noun
+1.
+the act of conforming, acquiescing, or yielding.
+2.
+a tendency to yield readily to others, especially in a weak and subservient way.
+3.
+conformity; accordance:
+in compliance with orders.
+4.
+cooperation or obedience:
+Compliance with the law is expected of all.
+5.
+Physics.
+the strain of an elastic body expressed as a function of the force producing the strain.
+
+
+//-------example1 policy: // cannot be deleted within 365 days since its archieved
+{
+  "Statement":[
+  {
+     "Sid": "deny-based-on-archive-age",
+     "Principal": "*",
+     ...
+     "Condition": {
+             "NumberLessThan" : {
+               "glacier:ArchiveAgeInDays" : "365"
+           }
+
+ ]
+
+}
+
+
+//-------example2 policy: // apply in order
+
+//
+...
+      "Sid": "no-one-can-delete-any-archive-from-vault",
+      "Principal": "*",
+      ...
+      "Sid": "you-can-delete-archive-less-than-1-year-old",
+      ""...
+
+
+// then the first statement takes precedence over the second one, which means that
+the even if the history of the archive is less than 1 year, no one can delete the archive       
+
+
+//-------Vault Lock
+1 initiate Vault Lock
+  1) attaches a vault lock policy to your vault
+  2) the lock is set to an InProgress state and a lock ID is returned
+  3) 24 hours to validate the lock(expires after 24 hours)
+
+2 complete Vault Lock
+  1) InProgress state to the Locked state(immutable)// cannot be changed
+
+//-------For the exam
+1 Vault Lock controls -- time-based retention, "undeleteable" or both
+2 implement control using IAM policies
+
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------DynamoDB
+1 what is DynamoDB
+  1) a fully managed, NoSQL Database service.
+      it supports both document and key-value data models
+  2) use cases
+     (1) mobile
+     (2) web
+     (3) gaming
+     (4) IoT
+     (5) Live online voting
+     (6) Session management
+     (7) Store S3 object meta-data
+  3) predictable fully manageable performance, with seamless scalability
+  4) no visible servers
+  5) no practical storage limiatations
+  6) SSD
+  7) fully resilient and highly available
+  8) performance scales - in a linear way
+  9) fully integrated with IAM - rich and controllable security
+
+//-------
+1 DynamoDB is a collection of Tables(region level. so availability zone is unimportant in DynamoDB)
+2 Tables are the highest level structure within a Database
+3 Its on tables that you specify the performance requirement
+4 Write Capacity Units (WCU) - Number of 1KB blocks per second
+5 Read Capacity Units (RCU) - Number of 4Kb blocks per second
+6 Eventually Consistent Reads(Default) -- there is a chance that we did't read the most recent data (uses half a RCU per 4KB block)
+7 Strongly Consistent Reads(uses 1 RCU per 4KB block) 
+
+//-------
+1 Dynamo DB uses the performance and the data quality to manage underlying resource provisioning
+
+2 unlike SQL databases, the data structure or Schema is NOT defined at the table level
+
+//-------Table in DynamoDB
+
+table ---- item --- attributes 
+
+special attributes:
+1 partition Key(=Hash Key) : unique in the table
+2 Sort key(=range key)     : allows one-to-many relationship    
+
+attribute types
+1 String             "hello"
+2 Number             "-123"
+3 Binary:            "fdsfsdaf390YKH23424jdfJJ"
+4 Boolean            true/false
+5 Null                   
+6 Document(List/Map): JSON
+7 Set: (array) ["red", "green", "blue"]
+
+//-------DynamoDB in the AWS Ecosystem
+
+Redshift               DynamoDB<--------->S3
+EMR                    DynamoDB<--------->S3
+
+Data Pipeline
+
+EC2 instances
+
+Lambda
+
+Kinesis Streams
+
+
+//---------------------------------------------------------------------------------------DynamoDB Partitons
+
+1 what are partitions?
+  1) they are the underlying storage and processing nodes of DynamoDB
+  2) initially one table equates to one Partition
+  3) Initially all the data for that table is stored by that one partition
+  4) You don't directly control the nuber of partitions
+  5) A partition can store 10 GB
+  6) A partition can handle 3000 RCU and 1000 WCU
+  7) So there is a capacity and performance relationship to the number of partitions THIS IS A KEY CONCEPT
+  8) Design tables and applications to avoid I/O "hot spots" / "hot keys"
+  9) when >10 GB or > 3000 RCU or > 1000 WCU required a new partition is added and the data is spread between them over time
+
+//-------So how is the data distributed?
+1 based on its Partition key(HASH)
+
+example
+----------------------------------------------
+Test_id             Student_id           Result
+
+
+partition A | partition B | partitoin C | partition D
+
+in this example, Student_id is the sort key.
+
+
+//-------
+1 Partitions will automatically increase
+2 while there is an automatic split of data across partitions, there is no automatic decrease when load/performance reduces
+3 allocated WCU and RCU is split between partitions(if we allocated 30000 RCU between 10 partitions, then each table will have 3000 RCU)
+4 Each partition key is limited to 10GB data
+5 Each partition key is limited to 3000 RCU 1000 WCU
+6 be careful increasing and decreasing WCU/RCU
+
+
+//-------Key concepts
+1 be aware of the underlying storage infrastructure - partitions
+2 be aware of what influences the nubmer of partitions
+3 Capacity(10GB)
+4 Performance(WCU/RCU)
+5 be aware that they increase, but they don't decrease
+6 be aware that table performance is split across the partitions - what you apply at a table level isn't what you often get
+7 true performance is based on performance allocated, key structure, and the time and key distributed of reads and writes
+
+//-------For the exam
+1 RCU
+2 WCU
+3 understand the key concepts on partitions 
+4 understand how partiton key chioces impact performance
+5 understand sort key selection
+
+//---------------------------------------------------------------------------------------DynamoDB Global and Local Secondary Indexes
+Dynamo DB offers two main data  retrieval operations, SCAN and QUERY
+
+1 without indexes, your ability to retrieve information is limited to your primary table structure
+2 indexes allow secondary representations of the data in a table, allowing efficient queries on those representations
+3 Indexes come in two forms - Global and Local Secondary
+
+//-------Local Secondary Indexes
+weather forcast
+
+partion key: weather station
+sort key: date
+
+Local Secondary Indexes can only be created at the time of table creation.
+
+1 LSI's contain Partition, Sort and New Sort key
+ other values can be added as projected values(like Null key attributes)
+
+2 Any data written to the table is copied Async to any LSI's
+
+3 LSI shares RCU and WCU with the table
+
+4 A LSI is a sparse index. An index will only have an ITEM, if the index sort key attribute is contained in the table item(row)
+
+
+
+Projection
+Represents attributes that are copied (projected) from the table into an index. These are in addition to the primary key attributes and index key attributes, which are automatically projected.
+
+//-------Storage and performance considerations with LSI's
+1 any non key values by default are not stored in a LSI
+2 if you query an attribute which is NOT projected, you are charged for the entire ITEM cost from pulling it from the main table       ???????
+3 take care with planning your LSI and item projections -it is important
+
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+//---------------------------------------------------------------------------------------
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+//-------
+
+
+
+
+

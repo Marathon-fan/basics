@@ -28,6 +28,27 @@ git clean -fd
 ```
 ///////////////////////////////
 
+
+# Rollback to an old Git commit in a public repo
+
+
+```
+git checkout [revision] .
+```
+where [revision] is the commit hash (for example: 12345678901234567890123456789012345678ab).
+
+Don't forget the . at the end, very important. This will apply changes to the whole tree. Then commit and you should be good.
+
+You can undo this by
+```
+git reset --hard; 
+```
+that will delete all modifications from the working directory and staging area.
+
+
+
+///////////////////////////////
+
 First get the commit ID
 ```
 git log
@@ -55,6 +76,15 @@ git revert <commit sha of the revert>
 **Be careful when you revert merge commits**
 
 **Revert doesn't mean undo**
+
+///////////////////////////////
+reset vs checkout
+
+In their simplest form, 
+**reset** resets the index without touching the working tree, while 
+**checkout** changes the working tree without touching the index.
+
+
 
 
 // git test
