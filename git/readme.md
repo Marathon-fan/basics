@@ -2,6 +2,23 @@
 
 git branch   
 
+# commit and branch   
+
+```
+A branch is just a named reference to a commit
+```
+
+# new content to be added
+
+```
+git diff devlop...newBranch
+```
+
+```
+git merge base
+```
+
+
 # branch setup    
 
 ```
