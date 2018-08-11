@@ -6,7 +6,7 @@ grep is a command-line utility for searching plain-text data sets for lines that
 Stands for: Global regular expression print
 
 example1
-```
+```sh
 $ ls | grep asset
 
 asset_and_liability_view.sql
@@ -19,7 +19,7 @@ xxxx  cluster1.k8s.xxx
 use the --color option, our successful matches will be highlighted for us   
 specify the -n option, grep will prefix each matching line with the line number   
 example2
-```
+```sh
 $ grep --color -n "al" asset_and_liability_view.sql 
 
 3:SELECT al.sfid AS asset_and_liability_sf_id
@@ -28,6 +28,14 @@ $ grep --color -n "al" asset_and_liability_view.sql
 6:	,al.opportunity__c AS opportunity
 ...
 ```
+
+```sh
+$ cat /etc/cassandra/cassandra.yaml | grep -n localhost
+599:listen_address: localhost
+676:rpc_address: localhost
+```
+
+
 
 specify the -i option to perform a case-insensitive match:    
 example3
