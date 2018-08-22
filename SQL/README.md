@@ -204,9 +204,12 @@ The LIKE operator is used in a WHERE clause to search for a specified pattern in
 
 There are two wildcards used in conjunction with the LIKE operator:
 
-% - The percent sign represents zero, one, or multiple characters
-_ - The underscore represents a single character
+```
+% - The percent sign represents zero, one, or multiple characters  
+_ - The underscore represents a single character  
 Note: MS Access uses a question mark (?) instead of the underscore (_).
+```
+
 ```SQL
 SELECT *  FROM salesforce.click_applicant__c  where acf_applicant_name__c like 'a%';
 ----apple apple
@@ -280,6 +283,16 @@ select class
 from courses
 group by class
 having count( distinct student) > 4;
+```
+
+### select   
+
+```SQL
+select * from tableA where id = 'string1' or id = 'string2' or id = 'string3';
+
+this is equivalent to the following query:
+
+select * from tableA where id in ('string1', 'string2', 'string3');
 ```
 
 

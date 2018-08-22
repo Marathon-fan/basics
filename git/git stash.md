@@ -13,4 +13,16 @@ git stash apply      // apply the stash to current branch, and the stash can be 
 ```
 
 
+```sh
 
+$ git stash list
+
+$ git stash save "add style to our site"
+
+$ git stash pop stash@{2}
+
+$ git stash show
+
+$ git stash show -p
+
+```
