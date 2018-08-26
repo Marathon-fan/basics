@@ -117,7 +117,9 @@ git reset --hard;
 that will delete all modifications from the working directory and staging area.
 
 
+# git fetch, git pull, git rebase   
 
+![git fetch, git pull, git rebase ](./pics/gitFetchPullRebase.png)
 
 
 # Revert changes to modified files.
