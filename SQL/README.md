@@ -304,4 +304,21 @@ this is equivalent to the following query:
 select * from tableA where id in ('string1', 'string2', 'string3');
 ```
 
+### max and round   
 
+Weather Observation Station 18
+```SQL
+https://www.hackerrank.com/challenges/weather-observation-station-18/problem
+
+select round(max(lat_n)- min(lat_n) + max(long_w)-min(long_w),4) from station;
+```
+
+
+```SQL
+https://www.hackerrank.com/challenges/weather-observation-station-19/problem
+select round(
+    sqrt(
+    power(max(lat_n) - min (lat_n), 2) + power(max(long_w) - min (long_w), 2)
+        ),
+       4) from station;
+```
