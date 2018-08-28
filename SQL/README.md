@@ -304,6 +304,8 @@ this is equivalent to the following query:
 select * from tableA where id in ('string1', 'string2', 'string3');
 ```
 
+### max and round   
+
 
 Outer join vs inner join  
 **When performing an inner join, rows from either table that are unmatched in the other table are not returned. In an outer join, unmatched rows in one or both tables can be returned.**
@@ -315,5 +317,21 @@ When performing an inner join, rows from either table that are unmatched in the 
 LEFT JOIN returns only unmatched rows from the left table.
 RIGHT JOIN returns only unmatched rows from the right table.
 FULL OUTER JOIN returns unmatched rows from both tables.
+```
 
+Weather Observation Station 18
+```SQL
+https://www.hackerrank.com/challenges/weather-observation-station-18/problem
+
+select round(max(lat_n)- min(lat_n) + max(long_w)-min(long_w),4) from station;
+```
+
+
+```SQL
+https://www.hackerrank.com/challenges/weather-observation-station-19/problem
+select round(
+    sqrt(
+    power(max(lat_n) - min (lat_n), 2) + power(max(long_w) - min (long_w), 2)
+        ),
+       4) from station;
 ```
