@@ -1,6 +1,8 @@
 # SQL
 
 
+
+
 ## join .... on
 
 ```
@@ -20,6 +22,13 @@ SELF JOIN: is used to join a table to itself as if the table were two tables, te
 
 CARTESIAN JOIN: returns the Cartesian product of the sets of records from the two or more joined tables.
 ```
+CrossJoin(The CROSS JOIN gives you the Cartesian product of the two tables, by matching every row from one table with every row from another table.  )
+
+![CrossJoin](./pics/CrossJoin.png) 
+
+full outer JOIN is like asking for a LEFT OUTER JOIN and a RIGHT OUTER JOIN in the same query. 
+![FullOuterJoin](./pics/FullOuterJoin.png) 
+
 
 ```SQL
 175. Combine Two Tables
