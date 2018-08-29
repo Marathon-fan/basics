@@ -330,6 +330,19 @@ select * from tableA where id in ('string1', 'string2', 'string3');
 
 ### max and round   
 
+
+Outer join vs inner join  
+**When performing an inner join, rows from either table that are unmatched in the other table are not returned. In an outer join, unmatched rows in one or both tables can be returned.**
+
+```
+Outer joins
+When performing an inner join, rows from either table that are unmatched in the other table are not returned. In an outer join, unmatched rows in one or both tables can be returned. There are a few types of outer joins:
+
+LEFT JOIN returns only unmatched rows from the left table.
+RIGHT JOIN returns only unmatched rows from the right table.
+FULL OUTER JOIN returns unmatched rows from both tables.
+```
+
 Weather Observation Station 18
 ```SQL
 https://www.hackerrank.com/challenges/weather-observation-station-18/problem
