@@ -104,6 +104,30 @@ select Name as Customers from Customers where Id NOT in
 
 ```
 
+## SELECT DISTINCT ON   
+
+
+
+
+PostgreSQL has a statement especially for that: SELECT DISTINCT ON.
+
+Let’s say I want to select one weather report for each location.
+!(selectDistinctOn)[./pics/selectDistinceOn.jpg]
+
+```SQL
+SELECT DISTINCT ON (location) location, time, report
+FROM weather_reports;
+```
+The query retrieves one weather report for each location.
+
+
+You can use several expressions in SELECT DISTINCT ON statement.
+```SQL
+SELECT DISTINCT ON (creation_date_week, resource_id) 
+   id, creation_date, 
+   date_trunc('week', creation_date) creation_date_week, resource_id
+from backup_data;
+```
 
 ## TO_DAYS        
 
