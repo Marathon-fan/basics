@@ -112,7 +112,7 @@ select Name as Customers from Customers where Id NOT in
 PostgreSQL has a statement especially for that: SELECT DISTINCT ON.
 
 Let’s say I want to select one weather report for each location.
-!(selectDistinctOn)[./pics/selectDistinceOn.jpg]
+![selectDistinctOn](./pics/selectDistinceOn.jpg)
 
 ```SQL
 SELECT DISTINCT ON (location) location, time, report
