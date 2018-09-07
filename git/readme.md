@@ -138,6 +138,13 @@ git log --oneline
 git revert commit-id
 ```
 
+# How do I navigate to the earliest commit in a Github repository?    
+
+```
+git log --reverse
+```
+
+
 # typical git flow   
 ![typical git flow](./pics/gitFlow.png)
 
