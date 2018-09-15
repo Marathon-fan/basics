@@ -37,6 +37,7 @@ $ cat /etc/cassandra/cassandra.yaml | grep -n localhost
 
 
 
+
 specify the -i option to perform a case-insensitive match:    
 example3
 ```
@@ -49,5 +50,12 @@ grep -n -i "name" asset_and_liability_view.sql
 66:	,rt.developername AS developername
 67:	,(rt.name::varchar(255)) AS recognition_type
 81:	ON al.institution__c = ad.acfbank_short_name__c
+```
+
+
+```sh
+-v, --invert-match
+             Selected lines are those not matching any of the specified pat-
+             terns.
 ```
 
