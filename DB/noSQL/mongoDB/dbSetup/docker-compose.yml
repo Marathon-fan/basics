@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  mongodb:
+    image: 'mongo:3.6-stretch'
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - "27777:27017"
+      - "10001:10001"
+      - "10002:10002"
+      - "10003:10003"
+      - "40001:40001"
+      - "40002:40002"
+      - "40003:40003"
+      - "40005:40005"
+    volumes:
+      - 'mongodb_data:/bitnami'
+
+volumes:
+  mongodb_data:
+    driver: local
+    

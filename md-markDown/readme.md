@@ -53,11 +53,31 @@ sample <b>sample</b> sample
 
 ## markdown table    
 
+```
+| Command | Description |
+| --- | --- |
+| git status | List all new or modified files |
+| git diff | Show file differences that haven't been staged |
+```
+
+
 | Command | Description |
 | --- | --- |
 | git status | List all new or modified files |
 | git diff | Show file differences that haven't been staged |
 
+
+```
+| MySQL | MongoDB |
+| --- | --- |
+| ACID Transactions | ACID Transactions |
+| Table | Collection|
+| Row | Document|
+| Column | Field|
+| Secondary Index | Secondary Index|
+| JOINs | Embedded documents, $lookup & $graphLookup|
+| GROUP_BY | Aggregation Pipeline|
+```
 
 | MySQL | MongoDB |
 | --- | --- |
