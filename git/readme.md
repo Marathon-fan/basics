@@ -100,6 +100,10 @@ $ git branch -D branch_name
 
 ```
 
+# git ignore   
+https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+
+
 # Rollback to an old Git commit in a public repo
 
 
