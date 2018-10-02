@@ -22,6 +22,9 @@ a -- Can be captured by [a-z0-9].
 
 a-z0-9 -- Can be captured by (a-z0-9) and then can be referenced in a replacement and/or later in the expression.
 
+[^ ]    Matches a single character that is not contained within the brackets. For example, [^abc] matches any character other than "a", "b", or "c". [^a-z] matches any single character that is not a lowercase letter from "a" to "z". Likewise, literal characters and ranges can be mixed.
+
+
 
 ```
 ?   The question mark indicates zero or one occurrences of the preceding element. 
