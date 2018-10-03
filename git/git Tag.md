@@ -4,6 +4,11 @@
 tag is nothing more than a label.
 used for milestone, etc   
 
+in Git you don't tag branches. You are tagging commits. It is correct to say that tag is just an annotated pointer to a commit.
+
+By default, git tag will create a tag on the commit that HEAD is referencing.
+
+
 ## lightweight tags
 
 ```
