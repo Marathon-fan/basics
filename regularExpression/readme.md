@@ -55,8 +55,10 @@ a-z0-9 -- Can be captured by (a-z0-9) and then can be referenced in a replacemen
 ^   Matches the starting position within the string. In line-based tools, it matches the starting position of any line.
 $   Matches the ending position of the string or the position just before a string-ending newline. In line-based tools, it matches the ending position of any line.
 
-(?:x) Matches 'x' but does NOT remember the match. Also known as NON-capturing parenthesis. 
-    (?<yyyy>\d{4})   matches 1998 and 2003, etc
+
+(?<name>regex)  Named capturing group -- Captures the text matched by "regex" into the group "name". 
+                The name can contain letters and numbers but must start with a letter. 
+                For example, (?<yyyy>\d{4}) matches 1998 and 2003, etc
     
 ```
 
