@@ -13,6 +13,8 @@ ps -aux | grep java
 
 ```
 
+
+
 ```sh
 kill -9 portNumber
 
@@ -104,6 +106,14 @@ linux scp
 
 ```
 
+/////////////////////
+
+
+**ll is an alias of ls -l(ll = ls -l)**
+```
+$ type ll
+ll is aliased to `ls -l'
+```
 
 /////////////////////
 
