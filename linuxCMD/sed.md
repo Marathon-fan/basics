@@ -105,3 +105,24 @@ $ sed 's/^[ \t]+//g' < input.txt > output.txt
 
 
 
+## Unix Sed to remove leading and trailing spaces in the CSV formatted file without considering String value which has comma      
+
+Source CSV file has the data like this :
+```
+"112", 21,,"4563446" , "VASQUE, HILARI", 365, "LOPEZ, ESTHER O" ,"16:06","00:00",, , 267.95, 463.48,"Test"
+```
+Expected OutPut CSV file:
+```
+"112",21,,"4563446","VASQUE, HILARI",365,"LOPEZ, ESTHER O","16:06","00:00",,,267.95,463.48,"Test"
+```
+
+answer
+```sh
+sed -r 's/("[^"]*"|[^,]+|,)\s*,\s*/\1,/g' file
+```
+
+```sh
+sed -r 's/("[^"]*"|[^,]+|,)\s*,\s*/\1,/g' <inputFile> > <outputFile>  
+```
+
+
