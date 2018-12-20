@@ -48,3 +48,29 @@ which writes the following lines to file johns.txt:
 7, John Lennon, Title 271, Price $7.90
 ```
 
+## Use sed to fix date format
+
+Data sample (after the whole sed pipe):
+```
+500,2,13/09/2007,30000.00,12,B-1
+501,2,15/09/2007,14000.00,8,B-2
+```
+
+Expected result:
+```
+500,2,2007-09-13,30000.00,12,B-1
+501,2,2007-09-15,14000.00,8,B-2
+```
+
+answer1
+```
+sed -E 's,([0-9]{2})/([0-9]{2})/([0-9]{4}),\3-\2-\1,g'
+```
+answer2
+```
+sed "s:,\([0-9]\+\)/\([0-9]\+\)/\([0-9]\+\),:,\3-\2-\1,:"
+```
+
+
+
+
