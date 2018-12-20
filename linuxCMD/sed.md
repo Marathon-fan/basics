@@ -72,5 +72,36 @@ sed "s:,\([0-9]\+\)/\([0-9]\+\)/\([0-9]\+\),:,\3-\2-\1,:"
 ```
 
 
+## remove leading whitespace from each line in a file   
+I have a file that looks something like this:
+```java
+for (i = 0; i < 100; i++)
+    for (i = 0; i < 100; i++)
+  for (i = 0; i < 100; i++)
+       for (i = 0; i < 100; i++)
+     for (i = 0; i < 100; i++)
+           for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+```
+I want it to look like this (remove indentations):
+```java
+for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+for (i = 0; i < 100; i++)
+```
+
+For this specific problem, something like this would work:
+```sh
+$ sed 's/^ *//g' < input.txt > output.txt
+```
+It says to replace all spaces at the start of a line with nothing. If you also want to remove tabs, change it to this:
+```sh
+$ sed 's/^[ \t]+//g' < input.txt > output.txt
+```
+
 
 
