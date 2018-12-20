@@ -4,6 +4,17 @@
 
 sed, which is short for **stream editor**, is to modify each line of a file or stream by replacing specified parts of the line. 
 
+
+
+```
+  -E, -r, --regexp-extended
+                 use extended regular expressions in the script
+                 (for portability use POSIX -E).
+
+```
+
+
+
 It makes basic text changes to a file or input from a pipeline. For example, say you have a file named "songs.text" that contains these lines:
 ```
 1, Justin Timberlake, Title 545, Price $6.30
