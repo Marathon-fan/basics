@@ -125,4 +125,10 @@ sed -r 's/("[^"]*"|[^,]+|,)\s*,\s*/\1,/g' file
 sed -r 's/("[^"]*"|[^,]+|,)\s*,\s*/\1,/g' <inputFile> > <outputFile>  
 ```
 
+## remove last 4 columns from csv file
+
+```sh
+sed -r 's/(,[^,]*){4}$//' <inputFile>
+sed -r 's/(,[^,]*){4}$//' <inputFile> > <outputFile>  
+```
 
