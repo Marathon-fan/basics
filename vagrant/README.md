@@ -80,10 +80,10 @@ On opening /etc/exports file each set begins with # VAGRANT-BEGIN: and ends with
 or maybe(on host machine)   
 
 sudo rm /etc/exports
-sudo touch /etc/exports
+sudo touch /etc/exports    # which means that we remove all the content in exports and new an empty exports file
 
 vagrant halt
-vagrant up
+vagrant up                 # or `vagrant reload`
 ```
 
 
