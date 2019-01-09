@@ -18,3 +18,15 @@ then
 ```
 $> source ~/.bash_profile
 ```
+
+## /etc/environment vs /etc/bash.bashrc   
+
+The /etc/environment file sets the variable system wide for every user on boot. Commands in the /etc/bash.bashrc are is executed if the bash shell is opened by any user. So the variables would not be set unless a bash shell is opened at least one time.
+
+One difference is that /etc/environment contains only variable definitions and doesn't appear to go through any sort of variable expansion/interpolation. Thus, you can't reference variables in definitions. This for instance won't work:
+```
+A="else"
+B="something $A"
+```
+B will literally be something $A, not the expected something else.
+
