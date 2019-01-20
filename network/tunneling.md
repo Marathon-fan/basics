@@ -1,7 +1,7 @@
 
 Tunneling
 
-Definition - What does Tunneling mean?    
+## Definition - What does Tunneling mean?    
 Tunneling is a protocol that allows for the secure movement of data from one network to another. Tunneling involves allowing private network communications to be sent across a public network, such as the Internet, through a process called encapsulation. The encapsulation process allows for data packets to appear as though they are of a public nature to a public network when they are actually private data packets, allowing them to pass through unnoticed.
 
 Tunneling is also known as **port forwarding.**    
@@ -21,4 +21,13 @@ This type of tunneling protocol involves a combination of using PPTP and Layer 2
 ```
 
 Tunneling is a way for communication to be conducted over a private network but tunneled through a public network. This is particularly useful in a corporate setting and also offers security features such as encryption options.
+
+## Dynamic Port Forwarding    
+**Dynamic Port Forwarding: Use Your SSH Server as a Proxy**   
+
+There’s also “dynamic port forwarding”, which works similarly to a proxy or VPN. The SSH client will create a SOCKS proxy you can configure applications to use. All the traffic sent through the proxy would be sent through the SSH server. This is similar to local forwarding—it takes local traffic sent to a specific port on your PC and sends it over the SSH connection to a remote location.
+
+For example, let’s say you’re using a public Wi-Fi network. You want to browse securely without being snooped on. If you have access to an SSH server at home, you could connect to it and use dynamic port forwarding. The SSH client will create a SOCKS proxy on your PC. All traffic sent to that proxy will be sent over the SSH server connection. No one monitoring the public Wi-Fi network will be able to monitor your browsing or censor the websites you can access. From the perspective of any websites you visit, it will be as if you were sitting in front of your PC at home. This also means you could use this trick to access US-only websites while outside of the USA—assuming you have access to an SSH server in the USA, of course.
+
+As an another example, you may want to access a media server application you have on your home network. For security reasons, you may only have an SSH server exposed to the Internet. You don’t allow incoming connections from the Internet to your media server application. You could set up dynamic port forwarding, configure a web browser to use the SOCKS proxy, and then access servers running on your home network through the web browser as if you were sitting in front of your SSH system at home. For example, if your media server is located at port 192.168.1.123 on your home network, you could plug the address 192.168.1.123 into any application using the SOCKS proxy and you’d access the media server as if you were on your home network.
 
