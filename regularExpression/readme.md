@@ -1,4 +1,4 @@
-# javascript
+# Javascript or Python or Java
 
 
 ## topics  
@@ -61,6 +61,72 @@ $   Matches the ending position of the string or the position just before a stri
                 For example, (?<yyyy>\d{4}) matches 1998 and 2003, etc
     
 ```
+
+### match vs search vs findall
+
+**match**
+
+```python
+import re
+
+file = open("xxxyyy.csv", "r");
+result_file = open('result_file_readAndPrint-dealWithDate.txt','w')
+
+header = 0;
+i = 0;
+for line in file:	
+    fields = re.split(',', line)
+    res = ''
+    for field in fields:
+    	z = re.match("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", field)
+    	if z:
+    		field = '' + field
+    		field = field[0:10] + ' ' + field[11:19] 
+    	res += field
+    	res += ','
+    result_file.write(res)	
+    #print (res)
+
+file.close()
+result_file.close()
+
+
+```
+
+**findall**
+```python
+import re
+
+file = open("final.sql", "r");
+# INSERT INTO TABLE ${hiveconf:cluster}${hiveconf:env}${hiveconf:domaindb}_base_siiam.case_c PARTITION (COPY_DATE)
+# SET mapreduce.job.queuename=${hiveconf:queue};
+# SET tez.queue.name=${hiveconf:queue};
+# INSERT INTO TABLE ${hiveconf:cluster}${hiveconf:env}${hiveconf:domaindb}_base_siiam.case_c PARTITION (COPY_DATE)
+# FROM ${hiveconf:cluster}${hiveconf:env}t_base_siiam.case_c casec
+# LEFT outer join ${hiveconf:cluster}${hiveconf:env}t_base_siiam.se_ref_wholesale_security ws
+# FROM ${hiveconf:cluster}${hiveconf:env}t_base_siiam.case_c casec
+# inner join ${hiveconf:cluster}${hiveconf:env}t_base_siiam.se_ref_wholesale_security ws
+result_file = open('hiveconfParms.txt','w')
+
+mapRes = {}
+for line in file:
+    print (line)
+    z = re.findall("{hiveconf:.*?}", line)
+    if z:
+        print (z)
+        for item in z:
+            mapRes[item] = '';
+
+for key, value in mapRes.iteritems():
+    result_file.write(key + '\n');
+
+file.close()
+result_file.close()
+
+```
+
+
+
 
 greedy vs non-greedy
 ```js
