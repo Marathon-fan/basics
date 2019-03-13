@@ -1,5 +1,50 @@
 
-Tunneling
+# PortScanning    
+
+## online port scanner      
+we can use a online port scanner to scan the address that we want to connect  
+
+The result could be:
+
+
+A machine's ip   
+```
+PORT     STATE    SERVICE
+21/tcp   filtered ftp
+22/tcp   filtered ssh
+23/tcp   filtered telnet
+80/tcp   filtered http
+110/tcp  filtered pop3
+143/tcp  filtered imap
+443/tcp  open     https
+3389/tcp filtered ms-wbt-server
+
+```
+or 
+
+B machine's ip   
+```
+PORT     STATE    SERVICE
+21/tcp   filtered ftp
+22/tcp   open     ssh
+23/tcp   filtered telnet
+80/tcp   closed   http
+110/tcp  filtered pop3
+143/tcp  filtered imap
+443/tcp  filtered https
+3389/tcp filtered ms-wbt-server
+```
+
+**The difference between Filtered Port and Closed Port are:**   
+
+```sh
+Closed Port: If you send a SYN to a closed port, it will respond back with a RST.
+Filtered Port: Presumably, the host is behind some sort of firewall. Here, the packet is simply dropped and you receive no response (not even a RST).
+Open Port: If you send a SYN to an open port, you would expect to receive SYN/ACK.
+```
+
+
+# Tunneling   
 
 ## Definition - What does Tunneling mean?    
 Tunneling is a protocol that allows for the secure movement of data from one network to another. Tunneling involves allowing private network communications to be sent across a public network, such as the Internet, through a process called encapsulation. The encapsulation process allows for data packets to appear as though they are of a public nature to a public network when they are actually private data packets, allowing them to pass through unnoticed.
