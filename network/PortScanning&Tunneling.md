@@ -60,7 +60,11 @@ Locate the following line:
 Remove # and change 22 to your desired port number.
 
 Restart the sshd service by running the following command:
-service sshd restart
+For CentOS and Fedora, type:
+sudo service sshd restart
+
+For Debian and Ubuntu, type:
+sudo service ssh restart
 ```
 
 # Tunneling   
