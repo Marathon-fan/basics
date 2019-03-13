@@ -43,6 +43,25 @@ Filtered Port: Presumably, the host is behind some sort of firewall. Here, the p
 Open Port: If you send a SYN to an open port, you would expect to receive SYN/ACK.
 ```
 
+# Change the SSH Port for Your Linux Server   
+
+To Change the SSH Port for Your Linux Server
+```sh
+Connect to your server via SSH (more info).
+
+Switch to the root user (more info).
+
+Run the following command:
+vi /etc/ssh/sshd_config
+
+Locate the following line:
+# Port 22
+
+Remove # and change 22 to your desired port number.
+
+Restart the sshd service by running the following command:
+service sshd restart
+```
 
 # Tunneling   
 
