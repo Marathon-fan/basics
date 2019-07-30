@@ -1,0 +1,19 @@
+
+
+
+
+MySQL - Meaning of “PRIMARY KEY”, “UNIQUE KEY” and “KEY” when used together while creating a table
+
+```
+A key is just a normal index. A way over simplification is to think of it like a card catalog at a library. It points MySQL in the right direction.
+
+A unique key is also used for improved searching speed, but it has the constraint that there can be no duplicated items (there are no two x and y where x is not y and x == y).
+
+The manual explains it as follows:
+
+A UNIQUE index creates a constraint such that all values in the index must be distinct. An error occurs if you try to add a new row with a key value that matches an existing row. This constraint does not apply to NULL values except for the BDB storage engine. For other engines, a UNIQUE index permits multiple NULL values for columns that can contain NULL. If you specify a prefix value for a column in a UNIQUE index, the column values must be unique within the prefix.
+
+```
+
+
+https://stackoverflow.com/questions/10908561/mysql-meaning-of-primary-key-unique-key-and-key-when-used-together-whil
